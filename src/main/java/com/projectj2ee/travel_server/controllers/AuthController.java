@@ -1,7 +1,7 @@
 package com.projectj2ee.travel_server.controllers;
 
-import com.projectj2ee.travel_server.dto.AuthenticationRequest;
-import com.projectj2ee.travel_server.dto.AuthenticationResponse;
+import com.projectj2ee.travel_server.dto.request.AuthenticationRequest;
+import com.projectj2ee.travel_server.dto.response.AuthenticationResponse;
 import com.projectj2ee.travel_server.security.jwt.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

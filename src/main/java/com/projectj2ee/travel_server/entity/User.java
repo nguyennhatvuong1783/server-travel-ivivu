@@ -1,9 +1,7 @@
 package com.projectj2ee.travel_server.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.io.Serializable;
@@ -20,6 +18,7 @@ public class User {
     private static  final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int user_id;
 
     @Column
@@ -43,8 +42,17 @@ public class User {
     @Column
     private Date date_of_birth;
 
-    @Column
+    @Temporal(TemporalType.DATE)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date registration_date;
 
+    @Column
+    private Date updated_at;
+
+    @Column
+    private Date deleted_at;
+
+    @Column
+    private Boolean status;
 
 }

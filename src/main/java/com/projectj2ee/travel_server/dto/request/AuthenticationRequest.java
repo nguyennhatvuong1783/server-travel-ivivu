@@ -1,4 +1,4 @@
-package com.projectj2ee.travel_server.dto;
+package com.projectj2ee.travel_server.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

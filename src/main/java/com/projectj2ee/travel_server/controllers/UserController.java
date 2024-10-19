@@ -1,26 +1,27 @@
 package com.projectj2ee.travel_server.controllers;
 
-import com.projectj2ee.travel_server.dto.UserDto;
+import com.projectj2ee.travel_server.dto.request.UserDto;
+import com.projectj2ee.travel_server.dto.response.ApiResponse;
+import com.projectj2ee.travel_server.entity.User;
 import com.projectj2ee.travel_server.exceptions.InvalidPayloadException;
 import com.projectj2ee.travel_server.exceptions.UserIdAlreadyExistException;
 import com.projectj2ee.travel_server.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto){
+    @PostMapping("/api/auth/register")
+    public ResponseEntity<User> saveUser(@RequestBody @Valid UserDto userDto){
         if (Objects.isNull(userDto)){
             throw new InvalidPayloadException("Payload cannot be null");
         }
@@ -29,4 +30,30 @@ public class UserController {
         }
         return userService.saveUser(userDto);
     }
+
+    @GetMapping("/users")
+    public ApiResponse<List<User>> getAllUsers(){
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/user/{Id}")
+    public ApiResponse<User> getUserById(@PathVariable("Id") String Id){
+        return userService.getUserById(Id);
+    }
+
+    @PutMapping("/user/{Id}")
+    public ApiResponse<User> updateUser(@PathVariable("Id") String Id, @RequestBody UserDto userDto){
+        if (Objects.isNull(userDto)){
+            throw new InvalidPayloadException("Payload cannot be null");
+        }
+        return userService.updateUser(Id,userDto);
+    }
+
+    @DeleteMapping("/user/{Id}")
+    public ResponseEntity<Void> deletedUser(@PathVariable("Id") String Id){
+        userService.deletedUser(Id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
