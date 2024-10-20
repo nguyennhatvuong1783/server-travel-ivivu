@@ -4,7 +4,6 @@ import com.projectj2ee.travel_server.dto.request.ActivityRequest;
 import com.projectj2ee.travel_server.entity.Activity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface ActivityMapper {
