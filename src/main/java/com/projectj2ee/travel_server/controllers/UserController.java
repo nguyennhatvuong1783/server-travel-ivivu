@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping("/user/{Id}")
-    public ApiResponse<User> updateUser(@PathVariable("Id") String Id, @RequestBody UserDto userDto){
+    public ApiResponse<User> updateUser(@PathVariable("Id") String Id, @RequestBody @Valid UserDto userDto){
         if (Objects.isNull(userDto)){
             throw new InvalidPayloadException("Payload cannot be null");
         }

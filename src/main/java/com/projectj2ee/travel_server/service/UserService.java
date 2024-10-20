@@ -25,7 +25,6 @@ public class UserService {
     private  final UserRepository userRepository;
 
     @Autowired
-
     private final PasswordEncoder passwordEncoder;
 
   public ResponseEntity<User> saveUser(UserDto dto) {
