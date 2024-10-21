@@ -3,7 +3,6 @@ package com.projectj2ee.travel_server.service;
 import com.projectj2ee.travel_server.dto.request.AccommodationRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.entity.Accommodation;
-import com.projectj2ee.travel_server.mapper.AccommodationMapper;
 import com.projectj2ee.travel_server.repository.AccommodationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -19,8 +18,6 @@ public class AccommodationService {
     @Autowired
     private final AccommodationRepository accommodationRepository;
 
-    @Autowired
-    private AccommodationMapper accommodationMapper;
 
     public ApiResponse<List<Accommodation>> getAllAccommodation(){
         return new ApiResponse<List<Accommodation>>(HttpStatus.OK.value(),"Success",accommodationRepository.findAll());
@@ -33,7 +30,11 @@ public class AccommodationService {
 
     public ApiResponse<Accommodation> addAccommodation(AccommodationRequest accommodationRequest){
         Accommodation entity = new Accommodation();
-        entity = accommodationMapper.accommodationRequestToAccommodation(accommodationRequest);
+        entity.setName(accommodationRequest.getName());
+        entity.setType(accommodationRequest.getType());
+        entity.setDescription(accommodationRequest.getDescription());
+        entity.setAddress(accommodationRequest.getAddress());
+        entity.setRating(accommodationRequest.getRating());
         entity.setStatus(true);
         accommodationRepository.save(entity);
         return new ApiResponse<Accommodation>(HttpStatus.CREATED.value(), "Created success",entity);
@@ -41,7 +42,11 @@ public class AccommodationService {
 
     public ApiResponse<Accommodation> updateAccommodation(String id, AccommodationRequest accommodationRequest){
         Accommodation entity = accommodationRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Accommondation not found"));
-        entity = accommodationMapper.accommodationRequestToAccommodation(accommodationRequest);
+        entity.setName(accommodationRequest.getName());
+        entity.setType(accommodationRequest.getType());
+        entity.setDescription(accommodationRequest.getDescription());
+        entity.setAddress(accommodationRequest.getAddress());
+        entity.setRating(accommodationRequest.getRating());
         entity.setStatus(true);
         entity.setId(Integer.parseInt(id));
         accommodationRepository.save(entity);

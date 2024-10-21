@@ -3,7 +3,6 @@ package com.projectj2ee.travel_server.service;
 import com.projectj2ee.travel_server.dto.request.CompanyRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.entity.Company;
-import com.projectj2ee.travel_server.mapper.CompanyMapper;
 import com.projectj2ee.travel_server.repository.CompanyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ public class CompanyService {
     @Autowired
     private final CompanyRepository companyRepository;
 
-    @Autowired
-    private CompanyMapper companyMapper;
 
     public ApiResponse<List<Company>> getAllCompany(){
         return new ApiResponse<List<Company>>(HttpStatus.OK.value(), "Success",companyRepository.findAll());
@@ -32,7 +29,8 @@ public class CompanyService {
 
     public ApiResponse<Company> addCompany(CompanyRequest companyRequest){
         Company entity = new Company();
-        entity = companyMapper.companyRequestToCompany(companyRequest);
+        entity.setName(companyRequest.getName());
+        entity.setDescription(companyRequest.getDescription());
         entity.setStatus(true);
         companyRepository.save(entity);
         return new ApiResponse<Company>(HttpStatus.CREATED.value(), "Create success",entity);
@@ -40,7 +38,8 @@ public class CompanyService {
 
     public ApiResponse<Company> editCompany(String id,CompanyRequest companyRequest){
         Company entity = companyRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Company not found"));
-        entity = companyMapper.companyRequestToCompany(companyRequest);
+        entity.setName(companyRequest.getName());
+        entity.setDescription(companyRequest.getDescription());
         entity.setStatus(true);
         entity.setId(Integer.parseInt(id));
         companyRepository.save(entity);

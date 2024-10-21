@@ -29,5 +29,5 @@ public class UserDto {
 
     private Date date_of_birth;
 
-
+    private Boolean isAdmin;
 }

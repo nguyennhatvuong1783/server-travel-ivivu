@@ -55,4 +55,7 @@ public class User {
     @Column
     private Boolean status;
 
+    @Column
+    private Boolean isAdmin;
+
 }
