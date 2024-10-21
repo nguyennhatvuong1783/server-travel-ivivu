@@ -1,10 +1,8 @@
 package com.projectj2ee.travel_server.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -13,7 +11,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@ToString
 public class User {
     private static  final long serialVersionUID = 1L;
 
@@ -55,7 +52,7 @@ public class User {
     @Column
     private Boolean status;
 
-    @Column
+    @Column(name = "is_admin")
     private Boolean isAdmin;
 
 }

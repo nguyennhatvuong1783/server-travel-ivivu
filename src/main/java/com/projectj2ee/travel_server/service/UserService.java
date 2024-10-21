@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     @Autowired
-    private  final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private final PasswordEncoder passwordEncoder;
@@ -47,7 +47,7 @@ public class UserService {
   }
 
   public ApiResponse<List<User>> getAllUsers(){
-      return new ApiResponse<List<User>>(HttpStatus.CREATED.value(),"Success",userRepository.findAll());
+      return new ApiResponse<List<User>>(HttpStatus.OK.value(),"Success",userRepository.findAll());
   }
 
   public ApiResponse<User> getUserById(String userId){
