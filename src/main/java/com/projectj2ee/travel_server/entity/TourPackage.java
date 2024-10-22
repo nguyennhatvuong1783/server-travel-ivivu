@@ -26,12 +26,22 @@ public class TourPackage {
     @Column
     private String description;
 
+    @Column
+    private int duration;
+
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(name = "max_participants")
     private int count;
 
+    @Column(name = "company_id")
+    private int companyId;
 
+    @Column(name = "price_detail_id")
+    private int priceDetailId;
+
+    @Column
+    private Boolean status;
 
 }
