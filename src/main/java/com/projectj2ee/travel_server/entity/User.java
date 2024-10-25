@@ -2,16 +2,21 @@ package com.projectj2ee.travel_server.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "users")
-public class User {
+public class User{
     private static  final long serialVersionUID = 1L;
 
     @Id
@@ -52,7 +57,7 @@ public class User {
     @Column
     private Boolean status;
 
-    @Column(name = "is_admin")
-    private Boolean isAdmin;
+    private Set<String> roles;
+
 
 }

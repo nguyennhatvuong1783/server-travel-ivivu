@@ -1,16 +1,21 @@
 package com.projectj2ee.travel_server.security.jwt;
 
+import com.projectj2ee.travel_server.repository.InvalidatedRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -21,12 +26,21 @@ public class JwtUtil {
     @Value("${jwt.token.lifespan}")
     private long tokenLifeSpan;
 
+    @Autowired
+    private final InvalidatedRepository invalidatedRepository;
+
+    public JwtUtil(InvalidatedRepository invalidatedRepository) {
+        this.invalidatedRepository = invalidatedRepository;
+    }
+
+
     private SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles",userDetails.getAuthorities());
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -35,16 +49,17 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+tokenLifeSpan))
+                .id(UUID.randomUUID().toString())
                 .signWith(getSigningKey())
                 .compact();
 
     }
 
-    private Claims extractAllClaims(String token){
+    public Claims extractAllClaims(String token){
         return Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
+    public  <T> T extractClaim(String token, Function<Claims, T> claimResolver){
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
@@ -53,7 +68,7 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private Date extractExpiration(String token){
+    public Date extractExpiration(String token){
         return extractClaim(token, Claims::getExpiration);
     }
 
@@ -63,7 +78,8 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails){
         final String username = extractUsernameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final String id = extractClaim(token,Claims::getId);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !invalidatedRepository.existsById(id);
     }
 
 }
