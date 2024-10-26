@@ -35,10 +35,10 @@ public class TourPackage {
     @Column(name = "max_participants")
     private int count;
 
-    @Column(name = "company_id")
+    @Column(name = "company_id",nullable = false)
     private int companyId;
 
-    @Column(name = "price_detail_id")
+    @Column(name = "price_detail_id",nullable = false)
     private int priceDetailId;
 
     @Column

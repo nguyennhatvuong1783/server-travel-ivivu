@@ -2,7 +2,6 @@ package com.projectj2ee.travel_server.dto.request;
 
 
 
-import com.projectj2ee.travel_server.validation.PasswordSpecialCharacter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

@@ -50,8 +50,6 @@ public class UserService {
         entity.setRoles(roles);
 
         entity.setStatus(true);
-        LocalDateTime localDateTime = LocalDateTime.now();
-        entity.setRegistration_date(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         User savedUser = userRepository.save(entity);
         return ResponseEntity.ok(savedUser);
   }

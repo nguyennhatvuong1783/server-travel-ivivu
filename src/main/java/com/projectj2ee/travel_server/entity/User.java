@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -21,7 +23,8 @@ public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int user_id;
+    @Column(name = "user_id")
+    private int id;
 
     @Column
     private String username;
@@ -46,7 +49,7 @@ public class User{
 
     @Temporal(TemporalType.DATE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Date registration_date;
+    private Date registration_date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
 
     @Column
     private Date updated_at;
