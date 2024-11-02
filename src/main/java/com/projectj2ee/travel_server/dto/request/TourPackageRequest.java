@@ -1,9 +1,11 @@
 package com.projectj2ee.travel_server.dto.request;
 
+import com.projectj2ee.travel_server.entity.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Data
 @Setter
@@ -20,5 +22,9 @@ public class TourPackageRequest {
     private int companyId; // Chỉ cần ID của công ty
     @NotNull(message = "Price Detail ID cannot be null")
     private int priceDetailId; // Chỉ cần ID của chi tiết giá
-
+    private Set<TourFeature> tourFeature;
+    private Set<Vehicle> vehicles;
+    private Set<Destination> destinations;
+    private Set<Activity> activities;
+    private Set<Accommodation> accommodations;
 }

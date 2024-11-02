@@ -12,10 +12,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReviewRequest {
-    @NotNull
+    @NotNull(message = "User not null")
     int userId;
 
-    @NotNull
+    @NotNull(message = "Package not null")
     int packageId;
 
     int rating;

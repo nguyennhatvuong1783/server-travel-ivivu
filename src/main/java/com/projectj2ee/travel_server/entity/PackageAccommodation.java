@@ -22,4 +22,5 @@ public class PackageAccommodation {
 
     @Column(name = "nights_stay") // Duration trong bảng TourPackge = sum(nightStay) + 1
     int nightStay;
+
 }

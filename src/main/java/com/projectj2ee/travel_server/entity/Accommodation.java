@@ -34,6 +34,6 @@ public class Accommodation {
     @Column
     private int rating;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 }

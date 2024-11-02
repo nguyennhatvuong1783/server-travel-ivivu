@@ -57,7 +57,7 @@ public class User{
     @Column
     private Date deleted_at;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 
     private Set<String> roles;

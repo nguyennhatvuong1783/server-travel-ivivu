@@ -33,6 +33,6 @@ public class Destination {
     @Column(name = "best_time_to_visit")
     private String bestTime;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 }

@@ -1,5 +1,6 @@
 package com.projectj2ee.travel_server.entity;
 
+import com.projectj2ee.travel_server.dto.enums.ActivityLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +28,10 @@ public class Activity {
     @Column
     private int duration;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "difficulty_level")
-    private String level;
+    private ActivityLevel level;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 }

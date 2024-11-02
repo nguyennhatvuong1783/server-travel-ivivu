@@ -18,5 +18,4 @@ import lombok.experimental.FieldDefaults;
 public class TourDateGuide {
    @EmbeddedId
    TourDateGuideIds id;
-
 }

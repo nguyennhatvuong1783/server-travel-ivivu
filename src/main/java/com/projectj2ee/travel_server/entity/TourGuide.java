@@ -32,6 +32,6 @@ public class TourGuide {
     @Column
     int experience;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     Boolean status;
 }

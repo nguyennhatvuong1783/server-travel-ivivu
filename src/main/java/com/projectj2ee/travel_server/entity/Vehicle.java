@@ -21,6 +21,6 @@ public class Vehicle {
     @Column
     private String description;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 }

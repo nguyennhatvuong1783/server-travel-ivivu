@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -23,8 +24,9 @@ public class Booking {
     @Column(name = "user_id",nullable = false)
     int userId;
 
-    @Column(name = "tour_date_id",nullable = false)
-    int tourDateId;
+    @OneToOne
+    @JoinColumn(name = "tour_date_id",referencedColumnName = "tour_date_id",nullable = false)
+    TourDate tourDate;
 
     @Column(name = "number_of_participants")
     int participants;
@@ -36,5 +38,12 @@ public class Booking {
     @Column(nullable = false)
     StatusBooking status;
 
+    @ManyToMany
+    @JoinTable(
+            name = "booking_promotions",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "promotion_id")
+    )
+    Set<Promotion> promotions;
 
 }

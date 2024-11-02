@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Setter
 @Getter
@@ -23,6 +25,7 @@ public class TourFeature {
     @Column
     String description;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     Boolean status;
+
 }

@@ -30,7 +30,7 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     public ApiResponse<List<Review>> getAllReviewByPackageId(String packageId){
-        return new ApiResponse<>(HttpStatus.OK.value(), "Success",reviewRepository.findByPackageId(Integer.parseInt(packageId)));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success",reviewRepository.findByTourPackage_id(Integer.parseInt(packageId)));
     }
 
     public ApiResponse<Review> createReview(ReviewRequest request){

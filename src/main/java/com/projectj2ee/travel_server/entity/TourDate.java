@@ -19,8 +19,9 @@ public class TourDate {
     @Column(name = "tour_date_id")
     int id;
 
-    @Column(name = "package_id",nullable = false)
-    int packageId;
+    @ManyToOne
+    @JoinColumn(name = "package_id", referencedColumnName = "package_id",nullable = false)
+    TourPackage tourPackage;
 
     @Column(name = "start_date")
     Date startDate;
@@ -31,7 +32,8 @@ public class TourDate {
     @Column(name = "available_spots")
     int spots;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     Boolean status;
+
 
 }

@@ -7,5 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TourPackageMapper {
+    @Mapping(source = "companyId", target = "company.id")
+    @Mapping(source = "priceDetailId", target = "priceDetail.id")
     TourPackage toEntity(TourPackageRequest tourPackageRequest);
 }

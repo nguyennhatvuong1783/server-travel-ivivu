@@ -35,6 +35,6 @@ public class Promotion {
     @Column(name = "end_date")
     Date end;
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     Boolean status;
 }

@@ -21,11 +21,13 @@ public class Review {
     @Column(name = "review_id")
     int id;
 
-    @Column(name = "user_id", nullable = false)
-    int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
+    User user;
 
-    @Column(name = "package_id",nullable = false)
-    int packageId;
+    @ManyToOne
+    @JoinColumn(name = "package_id", referencedColumnName = "package_id",nullable = false)
+    TourPackage tourPackage;
 
     @Column
     int rating;
@@ -36,6 +38,6 @@ public class Review {
     @Column(name = "review_date")
     Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
 
-    @Column
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     Boolean status ;
 }
