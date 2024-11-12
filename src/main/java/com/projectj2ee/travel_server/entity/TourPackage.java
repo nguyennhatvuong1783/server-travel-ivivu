@@ -21,6 +21,9 @@ public class TourPackage {
     @Column(name = "package_id")
     private int id;
 
+    @Column(unique = true, name = "tour_code")
+    private String tourCode;
+
     @Column
     private String name;
 
@@ -29,6 +32,9 @@ public class TourPackage {
 
     @Column
     private int duration;
+
+    @Column
+    private String image;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
@@ -40,9 +46,8 @@ public class TourPackage {
     @JoinColumn(name = "company_id", referencedColumnName = "company_id",nullable = false)
     private Company company;
 
-    @ManyToOne
-    @JoinColumn(name = "price_detail_id", referencedColumnName = "price_detail_id",nullable = false)
-    private PriceDetail priceDetail;
+    @Column(name = "price_detail")
+    private String priceDetail;
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;

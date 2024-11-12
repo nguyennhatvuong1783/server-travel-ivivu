@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TourDateRepository extends JpaRepository<TourDate,Long> {
     Boolean existsById(int id);
+    TourDate findById(int id);
 }

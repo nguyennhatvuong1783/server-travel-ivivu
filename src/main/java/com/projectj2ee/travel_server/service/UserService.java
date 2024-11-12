@@ -4,6 +4,7 @@ import com.projectj2ee.travel_server.dto.enums.Role;
 import com.projectj2ee.travel_server.dto.request.LogoutRequest;
 import com.projectj2ee.travel_server.dto.request.UserDto;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
+import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.entity.InvalidatedToken;
 import com.projectj2ee.travel_server.entity.User;
 import com.projectj2ee.travel_server.repository.InvalidatedRepository;
@@ -13,6 +14,9 @@ import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -62,8 +66,17 @@ public class UserService {
   }
 
   @PreAuthorize("hasAuthority('ADMIN')")
-  public ApiResponse<List<User>> getAllUsers(){
-      return new ApiResponse<List<User>>(HttpStatus.OK.value(),"Success",userRepository.findAll());
+  public PageResponse<User> getAllUsers(int page, int size) {
+      Sort sort = Sort.by("registration_date").descending();
+      Pageable pageable = PageRequest.of(page - 1, size, sort);
+      var pageData = userRepository.findAll(pageable);
+
+      return PageResponse.<User>builder()
+              .statusCode(HttpStatus.OK.value())
+              .currentPage(page)
+              .pageSize(pageData.getSize())
+              .totalPages(pageData.getTotalPages())
+              .data(pageData.getContent().stream().toList()).build();
   }
 
   @PostAuthorize("returnObject.data.username == authentication.name")
@@ -80,6 +93,7 @@ public class UserService {
       return new ApiResponse<User>(HttpStatus.OK.value(), "Success",user);
   }
 
+  @PostAuthorize("returnObject.data.username == authentication.name")
   public ApiResponse<User> updateUser(String userId,UserDto userDto){
       User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(()->new RuntimeException("User not found"));
       userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -100,12 +114,13 @@ public class UserService {
       return new ApiResponse<User>(HttpStatus.OK.value(), "Update successfull",saveUser);
   }
 
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ApiResponse<User> deletedUser(String userId){
       User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(()->new RuntimeException("User not found"));
       user.setStatus(false);
       LocalDateTime localDateTime = LocalDateTime.now();
       user.setDeleted_at(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()));
-      return new ApiResponse<User>(HttpStatus.OK.value(), "Deleled success");
+      return new ApiResponse<User>(HttpStatus.OK.value(), "Deleted success");
   }
 
 

@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
     @Mapping(source = "tourDateId", target = "tourDate.id")
+    @Mapping(source = "userId", target = "user.id")
     Booking toBooking(BookingRequest bookingRequest);
 }

@@ -21,8 +21,9 @@ public class Booking {
     @Column(name = "booking_id")
     int id;
 
-    @Column(name = "user_id",nullable = false)
-    int userId;
+    @OneToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
+    User user;
 
     @OneToOne
     @JoinColumn(name = "tour_date_id",referencedColumnName = "tour_date_id",nullable = false)

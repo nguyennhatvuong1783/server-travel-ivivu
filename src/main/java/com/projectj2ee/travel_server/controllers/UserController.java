@@ -2,6 +2,7 @@ package com.projectj2ee.travel_server.controllers;
 
 import com.projectj2ee.travel_server.dto.request.UserDto;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
+import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.entity.User;
 import com.projectj2ee.travel_server.exceptions.InvalidPayloadException;
 import com.projectj2ee.travel_server.exceptions.UserIdAlreadyExistException;
@@ -35,11 +36,14 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ApiResponse<List<User>> getAllUsers(){
+    public PageResponse<User> getAllUsers(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ){
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Username : {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info("Authority: {}",grantedAuthority.getAuthority()));
-        return userService.getAllUsers();
+        return userService.getAllUsers(page,size);
     }
 
     @GetMapping("/myInfo")

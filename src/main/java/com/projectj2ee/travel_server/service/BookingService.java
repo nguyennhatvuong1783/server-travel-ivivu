@@ -2,18 +2,33 @@ package com.projectj2ee.travel_server.service;
 
 import com.projectj2ee.travel_server.dto.enums.StatusBooking;
 import com.projectj2ee.travel_server.dto.request.BookingRequest;
+import com.projectj2ee.travel_server.dto.request.EmailDto;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
-import com.projectj2ee.travel_server.entity.Booking;
+import com.projectj2ee.travel_server.dto.response.PageResponse;
+import com.projectj2ee.travel_server.entity.*;
 import com.projectj2ee.travel_server.mapper.BookingMapper;
-import com.projectj2ee.travel_server.repository.BookingRepository;
-import com.projectj2ee.travel_server.repository.TourDateRepository;
-import com.projectj2ee.travel_server.repository.UserRepository;
+import com.projectj2ee.travel_server.repository.*;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,12 +43,35 @@ public class BookingService {
     private final TourDateRepository tourDateRepository;
 
     @Autowired
+    private final TourPackageRepository tourPackageRepository;
+
+    @Autowired
+    private final BookingPromotionRepository bookingPromotionRepository;
+
+    @Autowired
+    private final  PromotionRepository promotionRepository;
+
+    @Autowired
     private BookingMapper bookingMapper;
 
-    public ApiResponse<List<Booking>> getAllBooking(){
-        return new ApiResponse<List<Booking>>(HttpStatus.OK.value(), "Success",bookingRepository.findAll());
+    private final JavaMailSender javaMailSender;
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public PageResponse<Booking> getAllBooking(int page, int size){
+        Sort sort = Sort.by("booking_id").descending();
+        Pageable pageable = PageRequest.of(page -1,size,sort);
+        var pageData = bookingRepository.findAll(pageable);
+        return PageResponse.<Booking>builder()
+                .statusCode(HttpStatus.OK.value())
+                .currentPage(page)
+                .pageSize(pageData.getSize())
+                .totalPages(pageData.getTotalPages())
+                .totalElements(pageData.getTotalElements())
+                .data(pageData.getContent().stream().toList())
+                .build();
     }
 
+    @PostAuthorize("returnObject.data.username == authentication.name")
     public ApiResponse<Booking> getBookingById(String id){
         Booking entity = bookingRepository.findById(Long.parseLong(id))
                 .orElseThrow(()->new RuntimeException("Booking not found"));
@@ -51,7 +89,42 @@ public class BookingService {
 
         Booking entity = bookingMapper.toBooking(bookingRequest);
         entity.setStatus(StatusBooking.PENDING);
+
         bookingRepository.save(entity);
+
+        // check promotion -> update price
+        Optional<Booking> bookings = bookingRepository.findByUser_IdAndStatus(bookingRequest.getUserId(),StatusBooking.PENDING);
+        if (bookings.isPresent()){
+            Booking booking = bookings.get();
+            List<BookingPromotion> bookingPromotions = bookingPromotionRepository.findById_BookingId(booking.getId());
+            if (!bookingPromotions.isEmpty()){
+                List<Integer> promotionId = new ArrayList<>();
+                bookingPromotions.forEach(p -> promotionId.add(p.getId().getPromotionId()));
+
+                List<Promotion> promotions = new ArrayList<>();
+                promotionId.forEach(id -> promotions.add(promotionRepository.findById(id)));
+
+                List<BigDecimal> discount = new ArrayList<>();
+                promotions.forEach(d -> discount.add(d.getDiscount()));
+
+                BigDecimal totalPrice = booking.getTotalPrice();
+                BigDecimal discoundAmout = new BigDecimal("0");
+                discount.forEach(amout -> discoundAmout.add(amout));
+
+                BigDecimal finalPrice = totalPrice.subtract(discoundAmout);
+                booking.setTotalPrice(finalPrice);
+
+                bookingRepository.save(booking);
+
+            }
+        }
+
+        // Send mail to confirm
+        TourDate tourDate = tourDateRepository.findById(bookingRequest.getTourDateId());
+        TourPackage tourPackage = tourPackageRepository.findById(tourDate.getId());
+        User user = userRepository.findById(bookingRequest.getUserId());
+        emailService(user,tourPackage,entity,tourDate);
+
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Booking Success",entity);
     }
 
@@ -75,10 +148,76 @@ public class BookingService {
         return new ApiResponse<>(HttpStatus.OK.value(), "Update success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Void> deleteBooking(String id){
         Booking entity = bookingRepository.findById(Long.parseLong(id))
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         bookingRepository.delete(entity);
         return new ApiResponse<>(HttpStatus.OK.value(), "Delete success");
+    }
+
+    private void emailService(User user, TourPackage tourPackage, Booking entity, TourDate tourDate){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+        String email = user.getEmail();
+        String tourName = tourPackage.getName();
+        String tourId = String.valueOf(tourDate.getId());
+        String duration = String.valueOf(tourPackage.getDuration());
+        String participant = String.valueOf(entity.getParticipants());
+        String start = formatter.format(tourDate.getStartDate());
+        String end = formatter.format(tourDate.getEndDate());
+        String name = user.getFull_name();
+        String phone = user.getPhone_number();
+        String pricePackage = String.valueOf(tourPackage.getPrice());
+        String totalPrice = String.valueOf(entity.getTotalPrice());
+        EmailDto emailDto = EmailDto.builder()
+                .email(email)
+                .tourName(tourName)
+                .tourId(tourId)
+                .duration(duration)
+                .participant(participant)
+                .startDate(start)
+                .endDate(end)
+                .name(name)
+                .phone(phone)
+                .pricePackage(pricePackage)
+                .totalPrice(totalPrice)
+                .build();
+        sendEmail(emailDto);
+    }
+
+
+    public String sendEmail(EmailDto emailDto){
+        try{
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setFrom("trannhatqui712@gmail.com");
+            helper.setTo(emailDto.getEmail());
+            helper.setSubject("Xác nhận đặt tour");
+
+            try(var inputStream = Objects.requireNonNull(BookingService.class.getResourceAsStream("/templates/email-content.html"))) {
+                String htmlContent =  new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+                htmlContent = htmlContent.replace("{{tourName}}",emailDto.getTourName())
+                        .replace("{{id}}",emailDto.getTourId())
+                        .replace("{{duration}}",emailDto.getDuration() + " ngày")
+                        .replace("{{adult}}",emailDto.getParticipant())
+                        .replace("{{start}}",emailDto.getStartDate())
+                        .replace("{{end}}",emailDto.getEndDate())
+                        .replace("{{name}}",emailDto.getName())
+                        .replace("{{phone}}",emailDto.getPhone())
+                        .replace("{{email}}",emailDto.getEmail())
+                        .replace("{{pricePackage}}",emailDto.getPricePackage())
+                        .replace("{{totalPrice}}", emailDto.getTotalPrice());
+                helper.setText(htmlContent, true);
+            };
+
+            helper.addInline("logo.png",new ClassPathResource("templates/logo.png"));
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Success";
     }
 }
