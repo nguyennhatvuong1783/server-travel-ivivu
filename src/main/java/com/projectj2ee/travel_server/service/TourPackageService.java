@@ -30,6 +30,7 @@ public class TourPackageService {
     private final CloudinaryService cloudinaryService;
     private final TourPackageRepository tourPackageRepository;
     private  TourPackageMapper tourPackageMapper;
+    private final GoogleDriveService googleDriveService;
 
     private final CompanyRepository companyRepository;
 
@@ -55,7 +56,8 @@ public class TourPackageService {
         return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Success",entity);
     }
 
-    public ApiResponse<TourPackage> addTourPackage(TourPackageRequest tourPackageRequest, MultipartFile[] files) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponse<TourPackage> addTourPackage(TourPackageRequest tourPackageRequest, MultipartFile[] files, MultipartFile fileTxt) {
         companyRepository.findById((long) tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
         TourPackage entity = tourPackageMapper.toEntity(tourPackageRequest);
         entity.setStatus(true);
@@ -72,6 +74,9 @@ public class TourPackageService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+        String urlPrice = googleDriveService.uploadFile(fileTxt,entity.getTourCode());
+        entity.setPriceDetail(urlPrice);
 
         tourPackageRepository.save(entity);
         return new ApiResponse<TourPackage>(HttpStatus.CREATED.value(), "Create Success",entity);

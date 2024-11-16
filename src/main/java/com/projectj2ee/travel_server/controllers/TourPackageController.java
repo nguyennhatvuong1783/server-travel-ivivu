@@ -4,7 +4,6 @@ import com.projectj2ee.travel_server.dto.request.TourPackageRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.entity.TourPackage;
-import com.projectj2ee.travel_server.service.CloudinaryService;
 import com.projectj2ee.travel_server.service.GoogleDriveService;
 import com.projectj2ee.travel_server.service.TourPackageService;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import java.security.GeneralSecurityException;
 @AllArgsConstructor
 public class TourPackageController {
     private final TourPackageService tourPackageService;
-    private  final CloudinaryService cloudinaryService;
     private  final GoogleDriveService googleDriveService;
 
     @GetMapping("/")
@@ -37,8 +35,9 @@ public class TourPackageController {
 
     @PostMapping("/create")
     public ApiResponse<TourPackage> createTourPackage(@RequestBody TourPackageRequest tourPackageRequest,
-                                                      @RequestParam("file")MultipartFile[] file){
-        return tourPackageService.addTourPackage(tourPackageRequest,file);
+                                                      @RequestParam("file")MultipartFile[] file,
+                                                      @RequestParam("filetxt")MultipartFile filetxt){
+        return tourPackageService.addTourPackage(tourPackageRequest,file,filetxt);
     }
 
     @PutMapping("/{id}")

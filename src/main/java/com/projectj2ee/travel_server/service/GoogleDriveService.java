@@ -36,8 +36,13 @@ public class GoogleDriveService {
         return filePath.toString();
     }
 
-    public String uploadFile(MultipartFile file, String tourCode) throws GeneralSecurityException, IOException {
-        File fileupload = convert(file,tourCode);
+    public String uploadFile(MultipartFile file, String tourCode)  {
+        File fileupload = null;
+        try {
+            fileupload = convert(file,tourCode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try{
             String folderId = "1BefYj102tYApKTKP5Vz3u_1N9uI0a_Z8";
             Drive drive = createDrive();
