@@ -18,8 +18,9 @@ public class TourPackageRequest {
     private int duration;
     private BigDecimal price;
     private int count;
+    private String depart;
     @NotNull(message = "Company ID cannot be null")
-    private int companyId; // Chỉ cần ID của công ty
+    private int companyId;
     private Set<TourFeature> tourFeature;
     private Set<Vehicle> vehicles;
     private Set<Destination> destinations;

@@ -102,6 +102,7 @@ public class TourPackageService {
             throw new RuntimeException(e);
         }
 
+
         tourPackageRepository.save(entity);
         return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Update Success",entity);
     }

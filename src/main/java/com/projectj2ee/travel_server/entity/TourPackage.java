@@ -33,6 +33,9 @@ public class TourPackage {
     @Column
     private int duration;
 
+    @Column(name = "depart_from")
+    private String depart;
+
     @Column
     private String image;
 
