@@ -2,12 +2,9 @@ package com.projectj2ee.travel_server.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -62,5 +59,7 @@ public class User{
 
     private Set<String> roles;
 
+    @OneToOne(mappedBy = "user")
+    private ForgotPassword forgotPassword;
 
 }
