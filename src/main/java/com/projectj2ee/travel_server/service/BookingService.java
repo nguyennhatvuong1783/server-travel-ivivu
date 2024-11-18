@@ -72,8 +72,8 @@ public class BookingService {
     }
 
     @PostAuthorize("returnObject.data.username == authentication.name")
-    public ApiResponse<Booking> getBookingById(String id){
-        Booking entity = bookingRepository.findById(Long.parseLong(id))
+    public ApiResponse<Booking> getBookingById(int id){
+        Booking entity = bookingRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         return new ApiResponse<>(HttpStatus.OK.value(), "Success",entity);
     }
@@ -102,7 +102,10 @@ public class BookingService {
                 bookingPromotions.forEach(p -> promotionId.add(p.getId().getPromotionId()));
 
                 List<Promotion> promotions = new ArrayList<>();
-                promotionId.forEach(id -> promotions.add(promotionRepository.findById(id)));
+                promotionId.forEach(id ->{
+                    Optional<Promotion> promotionOpt = promotionRepository.findById(id);
+                    promotionOpt.ifPresent(promotions::add);
+                });
 
                 List<BigDecimal> discount = new ArrayList<>();
                 promotions.forEach(d -> discount.add(d.getDiscount()));
@@ -120,16 +123,19 @@ public class BookingService {
         }
 
         // Send mail to confirm
-        TourDate tourDate = tourDateRepository.findById(bookingRequest.getTourDateId());
-        TourPackage tourPackage = tourPackageRepository.findById(tourDate.getId());
+        Optional<TourDate> tourDateOpt = tourDateRepository.findById(bookingRequest.getTourDateId());
+        TourDate tourDate = tourDateOpt.orElseGet(TourDate::new);
+
+        Optional<TourPackage> tourPackageOpt = tourPackageRepository.findById(tourDate.getId());
+        TourPackage tourPackage = tourPackageOpt.orElseGet(TourPackage::new);
         User user = userRepository.findById(bookingRequest.getUserId());
         emailService(user,tourPackage,entity,tourDate);
 
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Booking Success",entity);
     }
 
-    public ApiResponse<Booking> updateStatus(String id,String status){
-        Booking entity = bookingRepository.findById(Long.parseLong(id))
+    public ApiResponse<Booking> updateStatus(int id,String status){
+        Booking entity = bookingRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         switch (status){
             case "confirm" :
@@ -149,8 +155,8 @@ public class BookingService {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ApiResponse<Void> deleteBooking(String id){
-        Booking entity = bookingRepository.findById(Long.parseLong(id))
+    public ApiResponse<Void> deleteBooking(int id){
+        Booking entity = bookingRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         bookingRepository.delete(entity);
         return new ApiResponse<>(HttpStatus.OK.value(), "Delete success");

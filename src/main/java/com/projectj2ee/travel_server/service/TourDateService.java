@@ -29,8 +29,8 @@ public class TourDateService {
         return new ApiResponse<List<TourDate>>(HttpStatus.OK.value(), "Success",tourDateRepository.findAll());
     }
 
-    public ApiResponse<TourDate> getTourDateById(String id){
-        TourDate entity = tourDateRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourDate> getTourDateById(int id){
+        TourDate entity = tourDateRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("TourDate not found"));
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
@@ -44,20 +44,20 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
-    public ApiResponse<TourDate> editTourDate(String id,TourDateRequest request){
-        TourDate entity = tourDateRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourDate> editTourDate(int id,TourDateRequest request){
+        TourDate entity = tourDateRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("TourDate not found"));
         if (!checkPackageId(request.getPackageId()))
             throw new RuntimeException("Tour Package not found");
         entity = tourDateMapper.toTourDate(request);
-        entity.setId(Integer.parseInt(id));
+        entity.setId(id);
         entity.setStatus(true);
         tourDateRepository.save(entity);
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
 
-    public ApiResponse<TourDate> deleteTourDateById(String id){
-        TourDate entity = tourDateRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourDate> deleteTourDateById(int id){
+        TourDate entity = tourDateRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("TourDate not found"));
         entity.setStatus(true);
         tourDateRepository.save(entity);

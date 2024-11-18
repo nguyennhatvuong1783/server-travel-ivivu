@@ -51,14 +51,14 @@ public class TourPackageService {
                 .build();
     }
 
-    public ApiResponse<TourPackage> getTourPackageById(String id){
-        TourPackage entity = tourPackageRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Tour-package not found"));
+    public ApiResponse<TourPackage> getTourPackageById(int id){
+        TourPackage entity = tourPackageRepository.findById(id).orElseThrow(()->new RuntimeException("Tour-package not found"));
         return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Success",entity);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourPackage> addTourPackage(TourPackageRequest tourPackageRequest, MultipartFile[] files, MultipartFile fileTxt) {
-        companyRepository.findById((long) tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
+        companyRepository.findById( tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
         TourPackage entity = tourPackageMapper.toEntity(tourPackageRequest);
         entity.setStatus(true);
         entity.setTourCode(generaTourCode());
@@ -83,11 +83,11 @@ public class TourPackageService {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ApiResponse<TourPackage> editTourPackage(String id,TourPackageRequest tourPackageRequest,MultipartFile[] files) {
-        TourPackage entity = tourPackageRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Tour-package not found"));
-        companyRepository.findById((long) tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
+    public ApiResponse<TourPackage> editTourPackage(int id,TourPackageRequest tourPackageRequest,MultipartFile[] files) {
+        TourPackage entity = tourPackageRepository.findById(id).orElseThrow(()->new RuntimeException("Tour-package not found"));
+        companyRepository.findById( tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
         entity = tourPackageMapper.toEntity(tourPackageRequest);
-        entity.setId(Integer.parseInt(id));
+        entity.setId(id);
         entity.setStatus(true);
 
         List<String> imageUrls = new ArrayList<>();
@@ -108,8 +108,8 @@ public class TourPackageService {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ApiResponse<TourPackage> deleteTourPackage(String id){
-        TourPackage entity = tourPackageRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Tour-package not found"));
+    public ApiResponse<TourPackage> deleteTourPackage(int id){
+        TourPackage entity = tourPackageRepository.findById(id).orElseThrow(()->new RuntimeException("Tour-package not found"));
         entity.setStatus(false);
         tourPackageRepository.save(entity);
         return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Delete Success",entity);

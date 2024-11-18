@@ -8,9 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface TourPackageRepository extends JpaRepository<TourPackage,Long> {
+public interface TourPackageRepository extends JpaRepository<TourPackage,Integer> {
     Boolean existsById(int id);
-    TourPackage findById(int id);
     Page<TourPackage> findAll(Pageable pageable);
 
     @Query(value = "SELECT t FROM TourPackage t ORDER BY t.tourCode DESC")

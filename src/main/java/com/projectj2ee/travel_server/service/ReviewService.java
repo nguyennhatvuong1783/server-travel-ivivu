@@ -43,8 +43,8 @@ public class ReviewService {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
-    public ApiResponse<Void> deleteReview(String id){
-        Review entity = reviewRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Review not found"));
+    public ApiResponse<Void> deleteReview(int id){
+        Review entity = reviewRepository.findById(id).orElseThrow(()->new RuntimeException("Review not found"));
         reviewRepository.delete(entity);
         return new ApiResponse<>(HttpStatus.OK.value(), "Deleted");
     }

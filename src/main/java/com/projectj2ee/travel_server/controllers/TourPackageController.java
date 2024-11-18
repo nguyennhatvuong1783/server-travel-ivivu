@@ -29,7 +29,7 @@ public class TourPackageController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TourPackage> getTourPackageById(@PathVariable("id") String id){
+    public ApiResponse<TourPackage> getTourPackageById(@PathVariable("id") int id){
         return tourPackageService.getTourPackageById(id);
     }
 
@@ -41,14 +41,14 @@ public class TourPackageController {
     }
 
     @PutMapping("/{id}")
-    public  ApiResponse<TourPackage> editTourPackage(@PathVariable("id") String id,
+    public  ApiResponse<TourPackage> editTourPackage(@PathVariable("id") int id,
                                                      @RequestBody TourPackageRequest tourPackageRequest,
                                                      @RequestParam("file")MultipartFile[] file){
         return tourPackageService.editTourPackage(id, tourPackageRequest, file);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<TourPackage> deleteTourPackage(@PathVariable("id") String id){
+    public ApiResponse<TourPackage> deleteTourPackage(@PathVariable("id")int id){
         return tourPackageService.deleteTourPackage(id);
     }
 

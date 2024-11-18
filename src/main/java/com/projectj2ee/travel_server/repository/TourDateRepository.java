@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TourDateRepository extends JpaRepository<TourDate,Long> {
+public interface TourDateRepository extends JpaRepository<TourDate,Integer> {
     Boolean existsById(int id);
-    TourDate findById(int id);
 }

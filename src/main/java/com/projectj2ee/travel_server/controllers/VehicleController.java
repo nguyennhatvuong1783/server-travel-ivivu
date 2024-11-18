@@ -21,7 +21,7 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Vehicle> getVehicleById(@PathVariable("id") String id){
+    public ApiResponse<Vehicle> getVehicleById(@PathVariable("id") int id){
         return vehicleService.getVehicleById(id);
     }
 
@@ -31,12 +31,12 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Vehicle> updateVehicle(@PathVariable("id") String id, @RequestBody VehicleRequest vehicleRequest){
+    public ApiResponse<Vehicle> updateVehicle(@PathVariable("id") int id, @RequestBody VehicleRequest vehicleRequest){
         return vehicleService.updateVehicle(vehicleRequest,id);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Vehicle> deleteVehicle(@PathVariable("id") String id){
+    public ApiResponse<Vehicle> deleteVehicle(@PathVariable("id") int id){
         return vehicleService.deleteVehicle(id);
     }
 }

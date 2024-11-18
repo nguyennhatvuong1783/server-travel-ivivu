@@ -5,7 +5,6 @@ import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.entity.TourFeature;
 import com.projectj2ee.travel_server.service.TourFeatureService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class TourFeatureController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TourFeature> getTourFeatureById(@PathVariable("id") String id){
+    public ApiResponse<TourFeature> getTourFeatureById(@PathVariable("id") int id){
         return tourFeatureService.getTourFeatureById(id);
     }
 
@@ -32,12 +31,12 @@ public class TourFeatureController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<TourFeature> updateTourFeature(@PathVariable("id") String id,@RequestBody TourFeatureRequest tourFeatureRequest){
+    public ApiResponse<TourFeature> updateTourFeature(@PathVariable("id") int id,@RequestBody TourFeatureRequest tourFeatureRequest){
         return tourFeatureService.editTourFeature(id, tourFeatureRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<TourFeature> deleteTourFeature(@PathVariable("id") String id){
+    public ApiResponse<TourFeature> deleteTourFeature(@PathVariable("id") int id){
         return tourFeatureService.deleteTourFeature(id);
     }
 }

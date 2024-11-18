@@ -22,7 +22,7 @@ public class TourGuideController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TourGuide> getTourGuideById(@PathVariable("id") String id){
+    public ApiResponse<TourGuide> getTourGuideById(@PathVariable("id") int id){
         return tourGuideService.getTourGuideById(id);
     }
 
@@ -32,12 +32,12 @@ public class TourGuideController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<TourGuide> editTourGuide(@PathVariable("id") String id,@RequestBody @Valid TourGuideRequest tourGuideRequest){
+    public ApiResponse<TourGuide> editTourGuide(@PathVariable("id") int id,@RequestBody @Valid TourGuideRequest tourGuideRequest){
         return tourGuideService.editTourGuide(id, tourGuideRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<TourGuide> deleteTourGuide(@PathVariable("id") String id){
+    public ApiResponse<TourGuide> deleteTourGuide(@PathVariable("id") int id){
         return tourGuideService.deleteTourGuide(id);
     }
 }

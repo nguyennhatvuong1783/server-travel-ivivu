@@ -21,8 +21,8 @@ public class VehicleService {
         return new ApiResponse<List<Vehicle>>(HttpStatus.OK.value(), "Success",vehicleRepository.findAll());
     }
 
-    public ApiResponse<Vehicle> getVehicleById(String id){
-        Vehicle entity = vehicleRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Vehicle not found"));
+    public ApiResponse<Vehicle> getVehicleById(int id){
+        Vehicle entity = vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle not found"));
         return new ApiResponse<Vehicle>(HttpStatus.OK.value(), "Success",entity);
     }
 
@@ -36,8 +36,8 @@ public class VehicleService {
         return new ApiResponse<Vehicle>(HttpStatus.CREATED.value(), "Create success",saveEntity);
     }
 
-    public ApiResponse<Vehicle> updateVehicle(VehicleRequest vehicleRequest,String id){
-        Vehicle entity = vehicleRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Vehicle not found"));
+    public ApiResponse<Vehicle> updateVehicle(VehicleRequest vehicleRequest,int id){
+        Vehicle entity = vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle not found"));
         entity.setName(vehicleRequest.getVehicle_name());
         entity.setDescription(vehicleRequest.getDescription());
         entity.setStatus(true);
@@ -45,8 +45,8 @@ public class VehicleService {
         return new ApiResponse<Vehicle>(HttpStatus.OK.value(), "Update success",saveEntity);
     }
 
-    public ApiResponse<Vehicle> deleteVehicle(String id){
-        Vehicle entity = vehicleRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Vehicle not found"));
+    public ApiResponse<Vehicle> deleteVehicle(int id){
+        Vehicle entity = vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle not found"));
         entity.setStatus(false);
         vehicleRepository.save(entity);
         return new ApiResponse<Vehicle>(HttpStatus.OK.value(), "Deleted success");

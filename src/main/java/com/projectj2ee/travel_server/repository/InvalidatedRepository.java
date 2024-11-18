@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InvalidatedRepository extends JpaRepository<InvalidatedToken,Long> {
+public interface InvalidatedRepository extends JpaRepository<InvalidatedToken,Integer> {
     boolean existsById(String id);
 }

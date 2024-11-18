@@ -21,7 +21,7 @@ public class DestinationController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Destination> getDestinationById(@PathVariable("id") String id){
+    public ApiResponse<Destination> getDestinationById(@PathVariable("id") int id){
         return destinationService.getDestinationById(id);
     }
 
@@ -31,12 +31,12 @@ public class DestinationController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Destination> editDestination(@PathVariable("id") String id, @RequestBody DestinationRequest destinationRequest){
+    public ApiResponse<Destination> editDestination(@PathVariable("id") int id, @RequestBody DestinationRequest destinationRequest){
         return destinationService.editDestination(id, destinationRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Destination> deleteDestination(@PathVariable("id") String id){
+    public ApiResponse<Destination> deleteDestination(@PathVariable("id") int id){
         return destinationService.deleteDestination(id);
     }
 }

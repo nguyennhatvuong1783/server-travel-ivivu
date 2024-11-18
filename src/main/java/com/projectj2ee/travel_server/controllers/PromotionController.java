@@ -21,7 +21,7 @@ public class PromotionController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Promotion> getPromotionById(@PathVariable("id") String id){
+    public ApiResponse<Promotion> getPromotionById(@PathVariable("id") int id){
         return promotionService.getPromotionById(id);
     }
 
@@ -31,12 +31,12 @@ public class PromotionController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Promotion> updatePromotion(@PathVariable("id") String id, @RequestBody PromotionRequest promotionRequest){
+    public ApiResponse<Promotion> updatePromotion(@PathVariable("id") int id, @RequestBody PromotionRequest promotionRequest){
         return promotionService.editPromotion(id, promotionRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Promotion> deletePromotion(@PathVariable("id") String id){
+    public ApiResponse<Promotion> deletePromotion(@PathVariable("id") int id){
         return promotionService.deletePromotion(id);
     }
 

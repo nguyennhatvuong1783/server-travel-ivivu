@@ -21,7 +21,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Company> getCompanyById(@PathVariable("id") String id){
+    public ApiResponse<Company> getCompanyById(@PathVariable("id") int id){
         return companyService.getCompanyById(id);
     }
 
@@ -31,12 +31,12 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Company> editCompany(@PathVariable("id") String id, @RequestBody CompanyRequest companyRequest){
+    public ApiResponse<Company> editCompany(@PathVariable("id") int id, @RequestBody CompanyRequest companyRequest){
         return companyService.editCompany(id, companyRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Company> deleteCompany(@PathVariable("id") String id){
+    public ApiResponse<Company> deleteCompany(@PathVariable("id") int id){
         return companyService.deleteCompanyd(id);
     }
 }

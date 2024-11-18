@@ -24,7 +24,7 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public  ApiResponse<Booking> getBookingId(@PathVariable("id") String id){
+    public  ApiResponse<Booking> getBookingId(@PathVariable("id") int id){
         return bookingService.getBookingById(id);
     }
 
@@ -38,12 +38,12 @@ public class BookingController {
             "<br>action : 'complete' use after user payment success" +
             "<br>action : 'cancelled' use after user cancelled booking or overtime payment")
     @PutMapping("/{action}/{id}")
-    public ApiResponse<Booking> updateBooking(@PathVariable("action") String action, @PathVariable("id") String id){
+    public ApiResponse<Booking> updateBooking(@PathVariable("action") String action, @PathVariable("id") int id){
         return bookingService.updateStatus(id,action);
     }
 
     @DeleteMapping("/{id}")
-    public  ApiResponse<Void> deleteBooking(@PathVariable("id") String id){
+    public  ApiResponse<Void> deleteBooking(@PathVariable("id") int id){
         return bookingService.deleteBooking(id);
     }
 

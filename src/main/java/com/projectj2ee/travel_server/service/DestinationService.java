@@ -26,8 +26,8 @@ public class DestinationService {
         return new ApiResponse<List<Destination>>(HttpStatus.OK.value(), "Success",destinationRepository.findAll());
     }
 
-    public ApiResponse<Destination> getDestinationById(String id){
-        Destination entity = destinationRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Destination not found"));
+    public ApiResponse<Destination> getDestinationById(int id){
+        Destination entity = destinationRepository.findById(id).orElseThrow(()->new RuntimeException("Destination not found"));
         return new ApiResponse<Destination>(HttpStatus.OK.value(), "Success",entity);
     }
 
@@ -38,17 +38,17 @@ public class DestinationService {
         return new ApiResponse<Destination>(HttpStatus.CREATED.value(), "Create Success",destination);
     }
 
-    public ApiResponse<Destination> editDestination(String id,DestinationRequest destinationRequest){
-        Destination entity = destinationRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Destination not found"));
+    public ApiResponse<Destination> editDestination(int id,DestinationRequest destinationRequest){
+        Destination entity = destinationRepository.findById(id).orElseThrow(()->new RuntimeException("Destination not found"));
         entity = destinationMapper.toDestination(destinationRequest);
-        entity.setId(Integer.parseInt(id));
+        entity.setId(id);
         entity.setStatus(true);
         destinationRepository.save(entity);
         return new ApiResponse<Destination>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
-    public ApiResponse<Destination> deleteDestination(String id){
-        Destination entity = destinationRepository.findById(Long.parseLong(id)).orElseThrow(()->new RuntimeException("Destination not found"));
+    public ApiResponse<Destination> deleteDestination(int id){
+        Destination entity = destinationRepository.findById(id).orElseThrow(()->new RuntimeException("Destination not found"));
         entity.setStatus(false);
         destinationRepository.save(entity);
         return new ApiResponse<Destination>(HttpStatus.OK.value(), "Delete Success",entity);

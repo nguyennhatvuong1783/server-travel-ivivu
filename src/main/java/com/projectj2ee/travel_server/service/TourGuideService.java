@@ -25,8 +25,8 @@ public class TourGuideService {
         return new ApiResponse<List<TourGuide>>(HttpStatus.OK.value(), "Success",tourGuideRepository.findAll());
     }
 
-    public ApiResponse<TourGuide> getTourGuideById(String id){
-        TourGuide entity = tourGuideRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourGuide> getTourGuideById(int id){
+        TourGuide entity = tourGuideRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Tour Guide not found"));
         return new ApiResponse<TourGuide>(HttpStatus.OK.value(), "Success",entity);
     }
@@ -39,18 +39,18 @@ public class TourGuideService {
         return new ApiResponse<TourGuide>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
-    public ApiResponse<TourGuide> editTourGuide(String id,TourGuideRequest tourGuideRequest){
-        TourGuide entity = tourGuideRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourGuide> editTourGuide(int id,TourGuideRequest tourGuideRequest){
+        TourGuide entity = tourGuideRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Tour Guide not found"));
         entity = tourGuideMapper.toTourGuide(tourGuideRequest);
-        entity.setId(Integer.parseInt(id));
+        entity.setId(id);
         entity.setStatus(true);
         tourGuideRepository.save(entity);
         return new ApiResponse<TourGuide>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
-    public ApiResponse<TourGuide> deleteTourGuide(String id){
-        TourGuide entity = tourGuideRepository.findById(Long.parseLong(id))
+    public ApiResponse<TourGuide> deleteTourGuide(int id){
+        TourGuide entity = tourGuideRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Tour Guide not found"));
         entity.setStatus(false);
         tourGuideRepository.save(entity);

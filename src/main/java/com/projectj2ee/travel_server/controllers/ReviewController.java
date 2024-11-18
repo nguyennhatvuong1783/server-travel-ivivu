@@ -27,7 +27,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteReview(@PathVariable("id") String id){
+    public ApiResponse<Void> deleteReview(@PathVariable("id") int id){
         return reviewService.deleteReview(id);
     }
 

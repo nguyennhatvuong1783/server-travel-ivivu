@@ -23,7 +23,7 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Activity> getActivityById(@PathVariable("id") String id){
+    public ApiResponse<Activity> getActivityById(@PathVariable("id") int id){
         return activityService.getActivityById(id);
     }
 
@@ -33,12 +33,12 @@ public class ActivityController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Activity> updateActivity(@PathVariable("id") String id,@RequestBody @Valid ActivityRequest activityRequest){
+    public ApiResponse<Activity> updateActivity(@PathVariable("id") int id,@RequestBody @Valid ActivityRequest activityRequest){
         return activityService.updateActivity(id, activityRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Activity> deleteActivity(@PathVariable("id") String id){
+    public ApiResponse<Activity> deleteActivity(@PathVariable("id") int id){
         return activityService.deleteActivity(id);
     }
 

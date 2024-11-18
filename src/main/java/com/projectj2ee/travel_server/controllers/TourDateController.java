@@ -6,7 +6,6 @@ import com.projectj2ee.travel_server.entity.TourDate;
 import com.projectj2ee.travel_server.service.TourDateService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class TourDateController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TourDate> getTourDateById(@PathVariable("id") String id){
+    public ApiResponse<TourDate> getTourDateById(@PathVariable("id") int id){
         return tourDateService.getTourDateById(id);
     }
 
@@ -33,12 +32,12 @@ public class TourDateController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<TourDate> updateTourDate(@PathVariable("id") String id,@RequestBody @Valid TourDateRequest tourDateRequest){
+    public ApiResponse<TourDate> updateTourDate(@PathVariable("id") int id,@RequestBody @Valid TourDateRequest tourDateRequest){
         return tourDateService.editTourDate(id, tourDateRequest);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<TourDate> deleteTourDate(@PathVariable("id") String id){
+    public ApiResponse<TourDate> deleteTourDate(@PathVariable("id") int id){
         return tourDateService.deleteTourDateById(id);
     }
 

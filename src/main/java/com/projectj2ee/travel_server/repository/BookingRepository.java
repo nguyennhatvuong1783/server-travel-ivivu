@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking,Long> {
+public interface BookingRepository extends JpaRepository<Booking,Integer> {
     Page<Booking> findAll(Pageable pageable);
 
     Optional<Booking> findByUser_IdAndStatus(int id, StatusBooking status);
+
 
     boolean existsById(int id);
 }
