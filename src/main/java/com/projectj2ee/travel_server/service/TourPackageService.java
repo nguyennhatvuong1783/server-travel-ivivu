@@ -10,6 +10,7 @@ import com.projectj2ee.travel_server.mapper.TourPackageMapper;
 import com.projectj2ee.travel_server.repository.CompanyRepository;
 import com.projectj2ee.travel_server.repository.TourPackageRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TourPackageService {
     @Autowired
     private final CloudinaryService cloudinaryService;
@@ -34,10 +36,8 @@ public class TourPackageService {
 
     private final CompanyRepository companyRepository;
 
-
-
     public PageResponse<TourPackage> getAllTourPackage(int page, int size){
-        Sort sort = Sort.by("package_id").descending();
+        Sort sort = Sort.by("id").descending();
         Pageable pageable = PageRequest.of(page-1,size,sort);
         var pageData = tourPackageRepository.findAll(pageable);
 
@@ -56,6 +56,21 @@ public class TourPackageService {
         return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    public PageResponse<TourPackage> getAllTourPackageByDepart(String depart,int page, int size){
+        Sort sort = Sort.by("id").descending();
+        Pageable pageable = PageRequest.of(page-1,size,sort);
+        var pageData = tourPackageRepository.findByDepart(depart,pageable);
+
+        return PageResponse.<TourPackage>builder()
+                .statusCode(HttpStatus.OK.value())
+                .currentPage(page)
+                .pageSize(pageData.getSize())
+                .totalPages(pageData.getTotalPages())
+                .totalElements(pageData.getTotalElements())
+                .data(pageData.getContent().stream().toList())
+                .build();
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourPackage> addTourPackage(TourPackageRequest tourPackageRequest, MultipartFile[] files, MultipartFile fileTxt) {
         companyRepository.findById( tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
@@ -70,6 +85,7 @@ public class TourPackageService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonImages = objectMapper.writeValueAsString(imageUrls);
+
             entity.setImage(jsonImages);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -83,12 +99,33 @@ public class TourPackageService {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ApiResponse<TourPackage> editTourPackage(int id,TourPackageRequest tourPackageRequest,MultipartFile[] files) {
-        TourPackage entity = tourPackageRepository.findById(id).orElseThrow(()->new RuntimeException("Tour-package not found"));
+    public ApiResponse<TourPackage> editTourPackage(int id,TourPackageRequest tourPackageRequest) {
+        Optional<TourPackage> entityOtp = tourPackageRepository.findById(id);
+        TourPackage entity;
+        if (entityOtp.isPresent()) {
+            entity = entityOtp.orElseGet(TourPackage::new);
+        }else {
+            throw new RuntimeException("TourPackage not found");
+        }
         companyRepository.findById( tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
         entity = tourPackageMapper.toEntity(tourPackageRequest);
         entity.setId(id);
         entity.setStatus(true);
+
+
+        tourPackageRepository.save(entity);
+        return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Update Success",entity);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponse<String> addImageTourPackage(MultipartFile[] files, int id){
+        Optional<TourPackage> entityOtp = tourPackageRepository.findById(id);
+        TourPackage entity;
+        if (entityOtp.isPresent()) {
+            entity = entityOtp.orElseGet(TourPackage::new);
+        }else {
+            throw new RuntimeException("TourPackage not found");
+        }
 
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile file : files){
@@ -97,14 +134,15 @@ public class TourPackageService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonImages = objectMapper.writeValueAsString(imageUrls);
+            log.info(String.valueOf(jsonImages.length()));
             entity.setImage(jsonImages);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-
         tourPackageRepository.save(entity);
-        return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Update Success",entity);
+        return new ApiResponse<String>(HttpStatus.OK.value(), "Update Success");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

@@ -9,6 +9,7 @@ import com.projectj2ee.travel_server.repository.TourPackageRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourDate> addTourDate(TourDateRequest request){
         if (!checkPackageId(request.getPackageId()))
             throw new RuntimeException("Tour Package not found");
@@ -44,6 +46,7 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourDate> editTourDate(int id,TourDateRequest request){
         TourDate entity = tourDateRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("TourDate not found"));
@@ -56,6 +59,7 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourDate> deleteTourDateById(int id){
         TourDate entity = tourDateRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("TourDate not found"));

@@ -8,6 +8,7 @@ import com.projectj2ee.travel_server.repository.DestinationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 
@@ -31,6 +32,7 @@ public class DestinationService {
         return new ApiResponse<Destination>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Destination> addDestination(DestinationRequest destinationRequest){
         Destination destination = destinationMapper.toDestination(destinationRequest);
         destination.setStatus(true);
@@ -38,6 +40,7 @@ public class DestinationService {
         return new ApiResponse<Destination>(HttpStatus.CREATED.value(), "Create Success",destination);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Destination> editDestination(int id,DestinationRequest destinationRequest){
         Destination entity = destinationRepository.findById(id).orElseThrow(()->new RuntimeException("Destination not found"));
         entity = destinationMapper.toDestination(destinationRequest);
@@ -47,6 +50,7 @@ public class DestinationService {
         return new ApiResponse<Destination>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Destination> deleteDestination(int id){
         Destination entity = destinationRepository.findById(id).orElseThrow(()->new RuntimeException("Destination not found"));
         entity.setStatus(false);

@@ -1,15 +1,18 @@
 package com.projectj2ee.travel_server.controllers;
 
 import com.projectj2ee.travel_server.dto.request.PaymentRequest;
+import com.projectj2ee.travel_server.dto.request.VNPayRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
+import com.projectj2ee.travel_server.dto.response.VNPayResponse;
 import com.projectj2ee.travel_server.entity.Payment;
 import com.projectj2ee.travel_server.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/api/auth/payment")
 @AllArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
@@ -27,5 +30,18 @@ public class PaymentController {
         return paymentService.addPayment(paymentRequest);
     }
 
+    @GetMapping("/vnpay")
+    public VNPayResponse pay(@RequestBody VNPayRequest vnPayRequest, HttpServletRequest request, @RequestBody PaymentRequest paymentRequest){
+        return paymentService.createVnPayPayment(vnPayRequest, request, paymentRequest);
+    }
 
+    @PutMapping("/confirm/{bookingId}")
+    public ApiResponse<String> confirmPayment(@RequestBody String transactionNo, @PathVariable("bookingId") int bookingId){
+        return paymentService.confirmPayment(bookingId, transactionNo);
+    }
+
+    @GetMapping("/vn-pay-callback")
+    public ApiResponse<String> payCallbackHandler(HttpServletRequest request){
+        return paymentService.orderReturn(request);
+    }
 }

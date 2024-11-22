@@ -29,13 +29,13 @@ public class ApplicationSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
-                .authorizeHttpRequests(requests ->
-                        requests.requestMatchers("/api/auth/**","/forgotPassword/**").permitAll()
-                                .requestMatchers("/h2-console/**").permitAll()
-                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                                .anyRequest()
-                                .authenticated()
-                )
+//                .authorizeHttpRequests(requests ->
+//                        requests.requestMatchers("/api/auth/**","/forgotPassword/**").permitAll()
+//                                .requestMatchers("/h2-console/**").permitAll()
+//                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+//                                .anyRequest()
+//                                .authenticated()
+//                )
                 .headers(headers -> headers
                                 .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 )

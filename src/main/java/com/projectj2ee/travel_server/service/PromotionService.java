@@ -8,6 +8,7 @@ import com.projectj2ee.travel_server.repository.PromotionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class PromotionService {
         return new ApiResponse<Promotion>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Promotion> addPromotion(PromotionRequest promotionRequest){
         Promotion entity = new Promotion();
         entity = promotionMapper.toPromotion(promotionRequest);
@@ -39,6 +41,7 @@ public class PromotionService {
         return new ApiResponse<Promotion>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Promotion> editPromotion(int id,PromotionRequest promotionRequest){
         Promotion entity = promotionRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Promotion not found"));
@@ -49,6 +52,7 @@ public class PromotionService {
         return new ApiResponse<Promotion>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Promotion> deletePromotion(int id){
         Promotion entity = promotionRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Promotion not found"));

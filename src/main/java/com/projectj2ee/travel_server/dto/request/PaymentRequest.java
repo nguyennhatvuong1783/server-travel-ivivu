@@ -1,7 +1,6 @@
 package com.projectj2ee.travel_server.dto.request;
 
 import com.projectj2ee.travel_server.dto.enums.PaymentMethod;
-import com.projectj2ee.travel_server.dto.enums.StatusPayment;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -24,5 +23,4 @@ public class PaymentRequest {
 
     String transaction;
 
-    StatusPayment status;
 }

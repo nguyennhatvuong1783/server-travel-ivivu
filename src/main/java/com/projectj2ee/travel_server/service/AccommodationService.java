@@ -7,6 +7,7 @@ import com.projectj2ee.travel_server.repository.AccommodationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class AccommodationService {
         return new ApiResponse<Accommodation>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Accommodation> addAccommodation(AccommodationRequest accommodationRequest){
         Accommodation entity = new Accommodation();
         entity.setName(accommodationRequest.getName());
@@ -39,6 +41,7 @@ public class AccommodationService {
         return new ApiResponse<Accommodation>(HttpStatus.CREATED.value(), "Created success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Accommodation> updateAccommodation(int id, AccommodationRequest accommodationRequest){
         Accommodation entity = accommodationRepository.findById(id).orElseThrow(()->new RuntimeException("Accommondation not found"));
         entity.setName(accommodationRequest.getName());
@@ -52,6 +55,7 @@ public class AccommodationService {
         return new ApiResponse<Accommodation>(HttpStatus.OK.value(), "Updated success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Accommodation> deletedAccommodation(int id){
         Accommodation entity = accommodationRepository.findById(id).orElseThrow(()->new RuntimeException("Accommondation not found"));
         entity.setStatus(false);

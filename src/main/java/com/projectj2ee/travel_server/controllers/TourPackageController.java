@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 @RestController
-@RequestMapping("/tour-package")
+@RequestMapping("/tour_package")
 @AllArgsConstructor
 public class TourPackageController {
     private final TourPackageService tourPackageService;
@@ -33,18 +33,32 @@ public class TourPackageController {
         return tourPackageService.getTourPackageById(id);
     }
 
+    @GetMapping("/depart")
+    public PageResponse<TourPackage> getAllTourPackageByDepart(
+            @RequestParam(value = "depart", required = true) String depart,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "12") int size
+    ){
+        return tourPackageService.getAllTourPackageByDepart(depart,page, size);
+    }
+
     @PostMapping("/create")
     public ApiResponse<TourPackage> createTourPackage(@RequestBody TourPackageRequest tourPackageRequest,
-                                                      @RequestParam("file")MultipartFile[] file,
+                                                      @RequestParam("files")MultipartFile[] files,
                                                       @RequestParam("filetxt")MultipartFile filetxt){
-        return tourPackageService.addTourPackage(tourPackageRequest,file,filetxt);
+        return tourPackageService.addTourPackage(tourPackageRequest,files,filetxt);
     }
 
     @PutMapping("/{id}")
     public  ApiResponse<TourPackage> editTourPackage(@PathVariable("id") int id,
-                                                     @RequestBody TourPackageRequest tourPackageRequest,
-                                                     @RequestParam("file")MultipartFile[] file){
-        return tourPackageService.editTourPackage(id, tourPackageRequest, file);
+                                                     @RequestBody TourPackageRequest tourPackageRequest){
+        return tourPackageService.editTourPackage(id, tourPackageRequest);
+    }
+
+    @PutMapping("/add-image/{id}")
+    public ApiResponse<String> addImage(@PathVariable("id") int id,
+                                        @RequestParam("files")MultipartFile[] files){
+        return tourPackageService.addImageTourPackage(files, id);
     }
 
     @DeleteMapping("/{id}")

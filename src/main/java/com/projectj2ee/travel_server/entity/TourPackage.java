@@ -27,6 +27,7 @@ public class TourPackage {
     @Column
     private String name;
 
+    @Lob
     @Column
     private String description;
 
@@ -36,6 +37,7 @@ public class TourPackage {
     @Column(name = "depart_from")
     private String depart;
 
+    @Lob
     @Column
     private String image;
 

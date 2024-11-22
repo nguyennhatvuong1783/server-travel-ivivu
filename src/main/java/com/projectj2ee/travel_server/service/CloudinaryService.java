@@ -23,8 +23,8 @@ public class CloudinaryService {
         assert file.getOriginalFilename() != null;
         String publicValue = generatePublicValue(file.getOriginalFilename());
         String extension = getFileName(file.getOriginalFilename())[1];
-        if (!extension.equalsIgnoreCase("jpg")){
-            throw new IllegalArgumentException("Only .jpg files are allowed");
+        if (!extension.equalsIgnoreCase("jpg") && !extension.equalsIgnoreCase("png")){
+            throw new IllegalArgumentException("Only .jpg .png files are allowed");
         }
         File fileUpload = null;
         try {

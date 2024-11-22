@@ -10,6 +10,7 @@ import com.projectj2ee.travel_server.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class ReviewService {
         return new ApiResponse<>(HttpStatus.OK.value(), "Success",reviewRepository.findByTourPackage_id(Integer.parseInt(packageId)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     public ApiResponse<Review> createReview(ReviewRequest request){
         if (!tourPackageRepository.existsById(request.getPackageId()) || !userRepository.existsById(request.getUserId())){
             throw new RuntimeException("TourPackage or User not found");

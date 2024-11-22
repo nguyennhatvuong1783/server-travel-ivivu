@@ -7,6 +7,7 @@ import com.projectj2ee.travel_server.repository.VehicleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class VehicleService {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Vehicle> addVehicle(VehicleRequest vehicleRequest){
         Vehicle entity = new Vehicle();
         entity.setName(vehicleRequest.getVehicle_name());
@@ -36,6 +38,7 @@ public class VehicleService {
         return new ApiResponse<Vehicle>(HttpStatus.CREATED.value(), "Create success",saveEntity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Vehicle> updateVehicle(VehicleRequest vehicleRequest,int id){
         Vehicle entity = vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle not found"));
         entity.setName(vehicleRequest.getVehicle_name());
@@ -45,6 +48,7 @@ public class VehicleService {
         return new ApiResponse<Vehicle>(HttpStatus.OK.value(), "Update success",saveEntity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<Vehicle> deleteVehicle(int id){
         Vehicle entity = vehicleRepository.findById(id).orElseThrow(()->new RuntimeException("Vehicle not found"));
         entity.setStatus(false);

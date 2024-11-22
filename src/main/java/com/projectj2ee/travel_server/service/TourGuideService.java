@@ -8,6 +8,7 @@ import com.projectj2ee.travel_server.repository.TourGuideRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class TourGuideService {
         return new ApiResponse<TourGuide>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourGuide> addTourGuide(TourGuideRequest tourGuideRequest){
         TourGuide entity = new TourGuide();
         entity = tourGuideMapper.toTourGuide(tourGuideRequest);
@@ -39,6 +41,7 @@ public class TourGuideService {
         return new ApiResponse<TourGuide>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourGuide> editTourGuide(int id,TourGuideRequest tourGuideRequest){
         TourGuide entity = tourGuideRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Tour Guide not found"));
@@ -49,6 +52,7 @@ public class TourGuideService {
         return new ApiResponse<TourGuide>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourGuide> deleteTourGuide(int id){
         TourGuide entity = tourGuideRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Tour Guide not found"));

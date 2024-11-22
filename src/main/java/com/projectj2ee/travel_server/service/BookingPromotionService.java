@@ -8,6 +8,7 @@ import com.projectj2ee.travel_server.repository.BookingRepository;
 import com.projectj2ee.travel_server.repository.PromotionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class BookingPromotionService {
     @Autowired
     private final PromotionRepository promotionRepository;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String addPromotionToBooking(BookingPromotionRequest bookingPromotionRequest){
         if (!bookingRepository.existsById(bookingPromotionRequest.getBookingId())){
             throw new RuntimeException("Booking not found");
@@ -39,6 +41,7 @@ public class BookingPromotionService {
         return "Success";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String deletePromotionBooking(BookingPromotionRequest bookingPromotionRequest){
         BookingPromotion entity = new BookingPromotion();
         BookingPromotionIds id = new BookingPromotionIds();

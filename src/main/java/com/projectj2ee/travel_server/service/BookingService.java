@@ -56,6 +56,7 @@ public class BookingService {
 
     private final JavaMailSender javaMailSender;
 
+
     @PreAuthorize("hasAuthority('ADMIN')")
     public PageResponse<Booking> getAllBooking(int page, int size){
         Sort sort = Sort.by("booking_id").descending();
@@ -78,6 +79,8 @@ public class BookingService {
         return new ApiResponse<>(HttpStatus.OK.value(), "Success",entity);
     }
 
+
+    @PreAuthorize("hasAuthority('USER', 'ADMIN)")
     public ApiResponse<Booking> addBooking(BookingRequest bookingRequest){
         if (!userRepository.existsById(bookingRequest.getUserId())){
             throw new RuntimeException("User not found");
@@ -134,6 +137,7 @@ public class BookingService {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Booking Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     public ApiResponse<Booking> updateStatus(int id,String status){
         Booking entity = bookingRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Booking not found"));

@@ -7,6 +7,7 @@ import com.projectj2ee.travel_server.repository.TourFeatureRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class TourFeatureService {
         return new ApiResponse<TourFeature>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourFeature> addTourFeature(TourFeatureRequest tourFeatureRequest){
         TourFeature entity = new TourFeature();
         entity.setName(tourFeatureRequest.getName());
@@ -36,6 +38,7 @@ public class TourFeatureService {
         return new ApiResponse<TourFeature>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourFeature> editTourFeature(int id,TourFeatureRequest tourFeatureRequest){
         TourFeature entity = tourFeatureRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("TourFeature not found"));
@@ -47,6 +50,7 @@ public class TourFeatureService {
         return new ApiResponse<TourFeature>(HttpStatus.OK.value(), "Update Success",entity);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourFeature> deleteTourFeature(int id){
         TourFeature entity = tourFeatureRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("TourFeature not found"));
