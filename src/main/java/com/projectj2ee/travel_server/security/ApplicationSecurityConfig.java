@@ -49,6 +49,8 @@ public class ApplicationSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -34,6 +33,7 @@ public class UserController {
         }
         return userService.saveUser(userDto);
     }
+
 
     @GetMapping("/users")
     public PageResponse<User> getAllUsers(

@@ -59,7 +59,7 @@ public class BookingService {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public PageResponse<Booking> getAllBooking(int page, int size){
-        Sort sort = Sort.by("booking_id").descending();
+        Sort sort = Sort.by("id").descending();
         Pageable pageable = PageRequest.of(page -1,size,sort);
         var pageData = bookingRepository.findAll(pageable);
         return PageResponse.<Booking>builder()

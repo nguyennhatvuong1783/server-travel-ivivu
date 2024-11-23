@@ -21,6 +21,9 @@ configurations {
 
 repositories {
 	mavenCentral()
+	flatDir {
+		dirs 'libs'
+	}
 }
 
 dependencies {
@@ -58,6 +61,8 @@ dependencies {
 	// https://central.sonatype.com/artifact/com.google.api-client/google-api-client
 	implementation 'com.google.api-client:google-api-client:2.3.0'
 
+
+	implementation(files('libs/java_ZaloPayUtil_1.02'))
 
 	compileOnly 'org.projectlombok:lombok:1.18.34'
 	runtimeOnly 'com.mysql:mysql-connector-j'

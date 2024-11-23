@@ -45,8 +45,8 @@ public class User{
     private Date date_of_birth;
 
     @Temporal(TemporalType.DATE)
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Date registration_date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+    @Column(name = "registration_date")
+    private Date registration = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
 
     @Column
     private Date updated_at;

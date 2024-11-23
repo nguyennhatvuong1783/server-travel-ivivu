@@ -1,16 +1,11 @@
 package com.projectj2ee.travel_server.service;
 
 import com.projectj2ee.travel_server.dto.enums.Role;
-import com.projectj2ee.travel_server.dto.request.LogoutRequest;
 import com.projectj2ee.travel_server.dto.request.UserDto;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
-import com.projectj2ee.travel_server.entity.InvalidatedToken;
 import com.projectj2ee.travel_server.entity.User;
-import com.projectj2ee.travel_server.repository.InvalidatedRepository;
 import com.projectj2ee.travel_server.repository.UserRepository;
-import com.projectj2ee.travel_server.security.jwt.JwtUtil;
-import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -67,7 +59,7 @@ public class UserService {
 
   @PreAuthorize("hasAuthority('ADMIN')")
   public PageResponse<User> getAllUsers(int page, int size) {
-      Sort sort = Sort.by("registration_date").descending();
+      Sort sort = Sort.by("registration").descending();
       Pageable pageable = PageRequest.of(page - 1, size, sort);
       var pageData = userRepository.findAll(pageable);
 
@@ -85,7 +77,8 @@ public class UserService {
       return new ApiResponse<User>(HttpStatus.OK.value(), "Success",user);
   }
 
-  public ApiResponse<User> getMyInfo(){
+    @PostAuthorize("returnObject.data.username == authentication.name")
+    public ApiResponse<User> getMyInfo(){
       var context = SecurityContextHolder.getContext();
       String username = context.getAuthentication().getName();
       User user = userRepository.findByUsername(username)

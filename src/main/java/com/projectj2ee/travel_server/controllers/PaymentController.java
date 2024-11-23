@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
     private final PaymentService paymentService;
 
+
     @GetMapping("/")
     public PageResponse<Payment> getAllPayment(
             @RequestParam(value = "page",required = false,defaultValue = "1") int page,
@@ -44,4 +45,5 @@ public class PaymentController {
     public ApiResponse<String> payCallbackHandler(HttpServletRequest request){
         return paymentService.orderReturn(request);
     }
+
 }
