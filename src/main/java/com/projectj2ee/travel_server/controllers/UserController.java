@@ -7,6 +7,8 @@ import com.projectj2ee.travel_server.entity.User;
 import com.projectj2ee.travel_server.exceptions.InvalidPayloadException;
 import com.projectj2ee.travel_server.exceptions.UserIdAlreadyExistException;
 import com.projectj2ee.travel_server.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +49,18 @@ public class UserController {
     }
 
     @GetMapping("/myInfo")
-    public ApiResponse<User> getMyInfo(){
+    public ApiResponse<User> getMyInfo(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        if (cookies!=null){
+            String token = null;
+            for (Cookie cookie : cookies) {
+                if ("Token".equals(cookie.getName())) { // Thay "Token" bằng tên cookie bạn đã sử dụng
+                    token = cookie.getValue();
+                    log.info(token);
+                }
+            }
+        }
+
         return userService.getMyInfo();
     }
 

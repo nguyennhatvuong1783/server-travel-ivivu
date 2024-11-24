@@ -29,19 +29,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader("Authorization");
         if (Objects.isNull(header) || !header.startsWith("Bearer")){
-//            chain.doFilter(request,response);
-//            return;
             Cookie[] cookies = request.getCookies();
-            String token = null;
-            for (Cookie cookie : cookies) {
-                if ("Token".equals(cookie.getName())) { // Thay "Token" bằng tên cookie bạn đã sử dụng
-                    token = cookie.getValue();
-                    break;
+            if (cookies!=null){
+                String token = null;
+                for (Cookie cookie : cookies) {
+                    if ("Token".equals(cookie.getName())) { // Thay "Token" bằng tên cookie bạn đã sử dụng
+                        token = cookie.getValue();
+                        break;
+                    }
                 }
-            }
-            if (token != null) {
-                UsernamePasswordAuthenticationToken authentication = getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (token != null) {
+                    UsernamePasswordAuthenticationToken authentication = getAuthentication(token);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
             chain.doFilter(request,response);
             return;
