@@ -6,7 +6,9 @@ import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.entity.User;
 import com.projectj2ee.travel_server.repository.UserRepository;
+import com.projectj2ee.travel_server.security.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
+@Slf4j
 public class UserService {
     @Autowired
     private UserRepository userRepository;
@@ -35,6 +39,9 @@ public class UserService {
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtUtil jwtUtil;
+
+    private final UserDetailsService userDetailsService;
 
   public ResponseEntity<User> saveUser(UserDto dto) {
         User entity = new User();
@@ -81,9 +88,11 @@ public class UserService {
     public ApiResponse<User> getMyInfo(){
       var context = SecurityContextHolder.getContext();
       String username = context.getAuthentication().getName();
+      log.info(username);
       User user = userRepository.findByUsername(username)
               .orElseThrow(()->new RuntimeException("User not existed"));
       return new ApiResponse<User>(HttpStatus.OK.value(), "Success",user);
+
   }
 
   @PostAuthorize("returnObject.data.username == authentication.name")

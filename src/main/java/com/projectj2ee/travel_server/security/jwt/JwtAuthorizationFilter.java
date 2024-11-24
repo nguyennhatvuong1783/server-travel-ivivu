@@ -2,6 +2,7 @@ package com.projectj2ee.travel_server.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader("Authorization");
         if (Objects.isNull(header) || !header.startsWith("Bearer")){
+//            chain.doFilter(request,response);
+//            return;
+            Cookie[] cookies = request.getCookies();
+            String token = null;
+            for (Cookie cookie : cookies) {
+                if ("Token".equals(cookie.getName())) { // Thay "Token" bằng tên cookie bạn đã sử dụng
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+            if (token != null) {
+                UsernamePasswordAuthenticationToken authentication = getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             chain.doFilter(request,response);
             return;
         }
@@ -48,6 +63,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                }
 
            }
+        }
+        return authentication;
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        UsernamePasswordAuthenticationToken authentication = null;
+
+        if (Objects.nonNull(token)) {
+            String username = jwtUtil.extractUsernameFromToken(token); // Giả sử jwtUtil có phương thức này
+            if (Objects.nonNull(username)) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtUtil.validateToken(token, userDetails)) { // Kiểm tra token
+                    authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                }
+            }
         }
         return authentication;
     }
