@@ -122,6 +122,7 @@ public class UserService {
       user.setStatus(false);
       LocalDateTime localDateTime = LocalDateTime.now();
       user.setDeleted_at(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+      userRepository.save(user);
       return new ApiResponse<User>(HttpStatus.OK.value(), "Deleted success");
   }
 
