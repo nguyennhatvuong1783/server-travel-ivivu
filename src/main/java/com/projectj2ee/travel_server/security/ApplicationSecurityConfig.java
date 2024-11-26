@@ -36,6 +36,8 @@ public class ApplicationSecurityConfig {
 //                                .anyRequest()
 //                                .authenticated()
 //                )
+//                .oauth2Login(withDefaults())
+//                .formLogin(withDefaults())
                 .headers(headers -> headers
                                 .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 )
