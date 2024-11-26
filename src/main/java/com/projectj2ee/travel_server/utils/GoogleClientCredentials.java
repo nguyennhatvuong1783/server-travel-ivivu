@@ -7,11 +7,25 @@ public class GoogleClientCredentials {
     private Installed installed;
 
     public static class Installed {
+        @JsonProperty("client_id")
         private String clientId;
+
+        @JsonProperty("client_secret")
         private String clientSecret;
+
+        @JsonProperty("auth_uri")
         private String authUri;
+
+        @JsonProperty("token_uri")
         private String tokenUri;
+
+        @JsonProperty("auth_provider_x509_cert_url")
         private String authProviderX509CertUrl;
+
+        @JsonProperty("redirect_uris")
         private String[] redirectUris;
+
+        @JsonProperty("project_id")
+        private String projectId;
     }
 }
