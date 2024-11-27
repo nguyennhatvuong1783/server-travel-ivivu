@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -68,6 +69,18 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    public void updateParticipant(int id, int participant){
+        Optional<TourDate> tourDateOptional = tourDateRepository.findById(id);
+        if (tourDateOptional.isPresent()){
+            TourDate tourDate = tourDateOptional.orElseGet(TourDate::new);
+            if (participant > tourDate.getSpots()){
+                throw new RuntimeException("Participants invalid");
+            }
+            tourDate.setSpots(tourDate.getSpots()-participant);
+            tourDateRepository.save(tourDate);
+        }
+        throw new RuntimeException("Tour Date not found");
+    }
     private Boolean checkPackageId(int id){
         return tourPackageRepository.existsById(id);
     }

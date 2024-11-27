@@ -56,6 +56,8 @@ public class BookingService {
 
     private final JavaMailSender javaMailSender;
 
+    private TourDateService tourDateService;
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public PageResponse<Booking> getAllBooking(int page, int size){
@@ -82,6 +84,7 @@ public class BookingService {
 
     @PreAuthorize("hasAuthority('USER', 'ADMIN)")
     public ApiResponse<Booking> addBooking(BookingRequest bookingRequest){
+        int participant = bookingRequest.getParticipants();
         if (!userRepository.existsById(bookingRequest.getUserId())){
             throw new RuntimeException("User not found");
         }
@@ -107,7 +110,9 @@ public class BookingService {
                 List<Promotion> promotions = new ArrayList<>();
                 promotionId.forEach(id ->{
                     Optional<Promotion> promotionOpt = promotionRepository.findById(id);
-                    promotionOpt.ifPresent(promotions::add);
+                    promotionOpt
+                            .filter(Promotion::getStatus)
+                            .ifPresent(promotions::add);
                 });
 
                 List<BigDecimal> discount = new ArrayList<>();
@@ -121,7 +126,7 @@ public class BookingService {
                 booking.setTotalPrice(finalPrice);
 
                 bookingRepository.save(booking);
-
+                tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
             }
         }
 
