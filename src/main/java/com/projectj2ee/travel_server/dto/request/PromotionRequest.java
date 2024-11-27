@@ -1,5 +1,6 @@
 package com.projectj2ee.travel_server.dto.request;
 
+import com.projectj2ee.travel_server.dto.enums.PromotionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,6 +17,8 @@ public class PromotionRequest {
     String code;
 
     String description;
+
+    PromotionType type;
 
     BigDecimal discount;
 

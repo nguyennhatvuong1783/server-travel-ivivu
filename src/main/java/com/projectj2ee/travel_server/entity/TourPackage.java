@@ -96,4 +96,5 @@ public class TourPackage {
             inverseJoinColumns = @JoinColumn(name = "accommodation_id")
     )
     private Set<Accommodation> accommodations;
+
 }

@@ -1,5 +1,6 @@
 package com.projectj2ee.travel_server.service;
 
+import com.projectj2ee.travel_server.dto.enums.PaymentMethod;
 import com.projectj2ee.travel_server.dto.enums.StatusBooking;
 import com.projectj2ee.travel_server.dto.enums.StatusPayment;
 import com.projectj2ee.travel_server.dto.request.PaymentRequest;
@@ -101,6 +102,7 @@ public class PaymentService {
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(),hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+        paymentRequest.setMethod(PaymentMethod.VNPAY);
 
         addPayment(paymentRequest);
         return VNPayResponse.builder()

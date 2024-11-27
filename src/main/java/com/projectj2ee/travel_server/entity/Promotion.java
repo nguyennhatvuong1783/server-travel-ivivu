@@ -1,5 +1,6 @@
 package com.projectj2ee.travel_server.entity;
 
+import com.projectj2ee.travel_server.dto.enums.PromotionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +26,11 @@ public class Promotion {
 
     @Column
     String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="discount_type")
+    PromotionType type;
+
 
     @Column(name = "discount_percentage",precision = 10,scale = 2)
     BigDecimal discount;

@@ -1,5 +1,6 @@
 package com.projectj2ee.travel_server.service;
 
+import com.projectj2ee.travel_server.dto.enums.PromotionType;
 import com.projectj2ee.travel_server.dto.enums.StatusBooking;
 import com.projectj2ee.travel_server.dto.request.BookingRequest;
 import com.projectj2ee.travel_server.dto.request.EmailDto;
@@ -115,17 +116,21 @@ public class BookingService {
                             .ifPresent(promotions::add);
                 });
 
-                List<BigDecimal> discount = new ArrayList<>();
-                promotions.forEach(d -> discount.add(d.getDiscount()));
-
-                BigDecimal totalPrice = booking.getTotalPrice();
-                BigDecimal discoundAmout = new BigDecimal("0");
-                discount.forEach(amout -> discoundAmout.add(amout));
-
-                BigDecimal finalPrice = totalPrice.subtract(discoundAmout);
-                booking.setTotalPrice(finalPrice);
-
+                BigDecimal discount = BigDecimal.ZERO;
+                BigDecimal originalPrice = booking.getTotalPrice();
+                for (Promotion p : promotions){
+                    if (p.getType() == PromotionType.PERCENTAGE){
+                        discount = discount.add(originalPrice.multiply(
+                                p.getDiscount().divide(new BigDecimal(100))
+                        ));
+                    } else if (p.getType() == PromotionType.AMOUNT) {
+                        discount = discount.add(p.getDiscount());
+                    }
+                }
+                originalPrice.subtract(discount).max(BigDecimal.ZERO);
+                booking.setTotalPrice(originalPrice);
                 bookingRepository.save(booking);
+
                 tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
             }
         }
