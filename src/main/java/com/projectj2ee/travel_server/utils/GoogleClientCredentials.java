@@ -1,11 +1,14 @@
 package com.projectj2ee.travel_server.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+@Getter
 public class GoogleClientCredentials {
     @JsonProperty("web")
     private Installed installed;
 
+    @Getter
     public static class Installed {
         @JsonProperty("client_id")
         private String clientId;

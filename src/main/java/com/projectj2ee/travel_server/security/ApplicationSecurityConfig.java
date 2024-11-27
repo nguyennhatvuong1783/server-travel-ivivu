@@ -39,6 +39,9 @@ public class ApplicationSecurityConfig {
 //                )
 //                .oauth2Login(withDefaults())
 //                .formLogin(withDefaults())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/api/auth/social-login")
+                        .defaultSuccessUrl("/api/auth/social/callback"))
                 .headers(headers -> headers
                                 .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 )

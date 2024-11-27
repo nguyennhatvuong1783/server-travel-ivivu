@@ -2,10 +2,12 @@ package com.projectj2ee.travel_server.controllers;
 
 import com.projectj2ee.travel_server.dto.request.AuthenticationRequest;
 import com.projectj2ee.travel_server.dto.request.RefreshRequest;
+import com.projectj2ee.travel_server.dto.request.UserDto;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.AuthenticationResponse;
 import com.projectj2ee.travel_server.security.jwt.JwtUtil;
 import com.projectj2ee.travel_server.service.AuthService;
+import com.projectj2ee.travel_server.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +23,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,6 +41,8 @@ public class AuthController {
     private UserDetailsService userDetailsService;
 
     private final AuthService authService;
+
+    private final UserService userService;
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class.getName());
 
@@ -61,7 +66,59 @@ public class AuthController {
         response.addCookie(cookie);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
 
+    @GetMapping("/social-login")
+    public ResponseEntity<String> socialAuth(
+            @RequestParam("login-type") String loginType,
+            HttpServletRequest request
+    ){
+        loginType = loginType.trim().toLowerCase();
+        String url = authService.generateAuthUrl(loginType);
+        return ResponseEntity.ok(url);
+    }
+
+    @GetMapping("/social/callback")
+    public ApiResponse<String> callback(
+            @RequestParam("code") String code,
+            @RequestParam("login-type") String loginType,
+            HttpServletRequest request,
+            @Context HttpServletResponse response
+    ) throws IOException {
+        Map<String, Object> userInfo = authService.authenticateAndFetchProfile(code, loginType);
+
+        if (userInfo == null)
+        {
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Failed to authenticate");
+        }
+
+        String username ="";
+        String email = "";
+        String fullName = "";
+        if (loginType.trim().equals("google")){
+            username = (String) Objects.requireNonNull(userInfo.get("sub"), "");
+            fullName = (String) Objects.requireNonNull(userInfo.get("name"), "");
+            email = (String) Objects.requireNonNull(userInfo.get("email"), "");
+        }
+        if (!userService.findByUsername(username)){
+            UserDto userDto = new UserDto();
+            userDto.setEmail(email);
+            userDto.setUsername(username);
+            userDto.setFull_name(fullName);
+            userDto.setPassword("1234");
+            userService.saveUser(userDto);
+        }
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final String jwt = jwtUtil.generateToken(userDetails);
+        Cookie cookie = new Cookie("Token",jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success");
     }
 
     @PostMapping("/logout")
