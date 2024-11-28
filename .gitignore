@@ -29,6 +29,7 @@ out/
 !**/src/test/**/out/
 cred.json
 google.json
+facebook.json
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
