@@ -46,4 +46,15 @@ public class PaymentController {
         return paymentService.orderReturn(request);
     }
 
+    @PostMapping("/zalopay")
+    public ApiResponse<String> createZaloPay(@RequestBody PaymentRequest request) throws Exception {
+        return paymentService.createZalopayPayment(request);
+    }
+
+    @PostMapping("/zalo-pay-callback")
+    public ApiResponse<String> callback(@RequestBody String request) throws Exception {
+        return paymentService.callbackZaloPay(request);
+    }
+
+
 }

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+
 @Service
 @AllArgsConstructor
 public class PaymentService {
@@ -39,6 +40,7 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final PaymentMapper paymentMapper;
     private final VNPayConfig vnPayConfig;
+    private final ZaloPayService zaloPayService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public PageResponse<Payment> getAllPayment(int size, int page){
@@ -148,5 +150,19 @@ public class PaymentService {
         }
 
     }
+
+//    @PreAuthorize("hasAuthority('USER')")
+    public ApiResponse<String> createZalopayPayment(PaymentRequest request) throws Exception {
+//        addPayment(request);
+        String paymentUrl = zaloPayService.createOrder(request);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success",paymentUrl);
+    }
+
+    public ApiResponse<String> callbackZaloPay(String Jsonstr){
+        String result = zaloPayService.callback(Jsonstr);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success",result);
+    }
+
+
 
 }
