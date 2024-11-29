@@ -134,10 +134,10 @@ public class BookingService {
                 originalPrice.subtract(discount).max(BigDecimal.ZERO);
                 booking.setTotalPrice(originalPrice);
                 bookingRepository.save(booking);
-
-                tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
             }
+            tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
         }
+
 
         // Send mail to confirm
         Optional<TourDate> tourDateOpt = tourDateRepository.findById(bookingRequest.getTourDateId());
@@ -230,7 +230,7 @@ public class BookingService {
                         .replace("{{start}}",emailDto.getStartDate())
                         .replace("{{end}}",emailDto.getEndDate())
                         .replace("{{name}}",emailDto.getName())
-                        .replace("{{phone}}",emailDto.getPhone())
+                        .replace("{{phone}}",emailDto.getPhone()==null ? "" : emailDto.getPhone())
                         .replace("{{email}}",emailDto.getEmail())
                         .replace("{{pricePackage}}",emailDto.getPricePackage())
                         .replace("{{totalPrice}}", emailDto.getTotalPrice());
