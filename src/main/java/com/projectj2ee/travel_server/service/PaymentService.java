@@ -4,7 +4,6 @@ import com.projectj2ee.travel_server.dto.enums.PaymentMethod;
 import com.projectj2ee.travel_server.dto.enums.StatusBooking;
 import com.projectj2ee.travel_server.dto.enums.StatusPayment;
 import com.projectj2ee.travel_server.dto.request.PaymentRequest;
-import com.projectj2ee.travel_server.dto.request.VNPayRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.dto.response.VNPayResponse;
@@ -58,7 +57,7 @@ public class PaymentService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ApiResponse<Payment> addPayment(PaymentRequest paymentRequest){
         Payment payment = paymentMapper.toPayment(paymentRequest);
         payment.setStatus(StatusPayment.PENDING);
@@ -94,8 +93,8 @@ public class PaymentService {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    public VNPayResponse createVnPayPayment(VNPayRequest vnPayRequest, HttpServletRequest request, PaymentRequest paymentRequest){
-        Map<String,String> vnpParamsMap = vnPayConfig.getVNPayConfig(vnPayRequest.getOrderInfo(), vnPayRequest.getPrice());
+    public VNPayResponse createVnPayPayment(HttpServletRequest request, PaymentRequest paymentRequest){
+        Map<String,String> vnpParamsMap = vnPayConfig.getVNPayConfig("Payment VNPay", paymentRequest.getAmount().intValue());
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
 
         // build query Url

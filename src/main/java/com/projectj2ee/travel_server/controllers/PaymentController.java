@@ -1,7 +1,6 @@
 package com.projectj2ee.travel_server.controllers;
 
 import com.projectj2ee.travel_server.dto.request.PaymentRequest;
-import com.projectj2ee.travel_server.dto.request.VNPayRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.dto.response.VNPayResponse;
@@ -32,8 +31,8 @@ public class PaymentController {
     }
 
     @GetMapping("/vnpay")
-    public VNPayResponse pay(@RequestBody VNPayRequest vnPayRequest, HttpServletRequest request, @RequestBody PaymentRequest paymentRequest){
-        return paymentService.createVnPayPayment(vnPayRequest, request, paymentRequest);
+    public VNPayResponse pay(HttpServletRequest request, @RequestBody PaymentRequest paymentRequest){
+        return paymentService.createVnPayPayment(request, paymentRequest);
     }
 
     @PutMapping("/confirm/{bookingId}")

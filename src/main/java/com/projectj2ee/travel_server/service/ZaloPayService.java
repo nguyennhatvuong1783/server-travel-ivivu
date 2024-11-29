@@ -92,7 +92,7 @@ public class ZaloPayService {
             put("bank_code", "");
             put("item", new JSONArray(item).toString());
             put("embed_data", new JSONObject(embedData).toString());
-            put("callback_url","https://cdd1-113-173-123-239.ngrok-free.app/api/auth/payment/zalo-pay-callback");
+            put("callback_url","https://0658-125-235-238-144.ngrok-free.app/api/auth/payment/zalo-pay-callback");
         }};
 
         // Generate MAC
