@@ -1,6 +1,5 @@
 package com.projectj2ee.travel_server.dto.request;
 
-import com.projectj2ee.travel_server.entity.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -21,9 +20,9 @@ public class TourPackageRequest {
     private String depart;
     @NotNull(message = "Company ID cannot be null")
     private int companyId;
-    private Set<TourFeature> tourFeature;
-    private Set<Vehicle> vehicles;
-    private Set<Destination> destinations;
-    private Set<Activity> activities;
-    private Set<Accommodation> accommodations;
+    private Set<Integer> tourFeatureId;
+    private Set<Integer> vehicleId;
+    private Set<Integer> destinationId;
+    private Set<Integer> activityId;
+    private Set<Integer> accommodationId;
 }

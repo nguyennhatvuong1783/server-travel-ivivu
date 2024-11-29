@@ -2,11 +2,12 @@ package com.projectj2ee.travel_server.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projectj2ee.travel_server.dto.request.PackageDestinationRequest;
+import com.projectj2ee.travel_server.dto.request.PackageFeatureRequest;
 import com.projectj2ee.travel_server.dto.request.TourPackageRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
 import com.projectj2ee.travel_server.dto.response.TourPackageResponse;
-import com.projectj2ee.travel_server.entity.TourFeature;
 import com.projectj2ee.travel_server.entity.TourPackage;
 import com.projectj2ee.travel_server.mapper.TourPackageMapper;
 import com.projectj2ee.travel_server.repository.CompanyRepository;
@@ -38,6 +39,7 @@ public class TourPackageService {
 
     private final CompanyRepository companyRepository;
     private final PackageFeatureService packageFeatureService;
+    private final PackageDestinationService packageDestination;
 
     public PageResponse<TourPackageResponse> getAllTourPackage(int page, int size){
         Sort sort = Sort.by("id").descending();
@@ -99,7 +101,8 @@ public class TourPackageService {
         companyRepository.findById( tourPackageRequest.getCompanyId()).orElseThrow(()->new RuntimeException("Company Id not exits"));
         TourPackage entity = tourPackageMapper.toEntity(tourPackageRequest);
         entity.setStatus(true);
-        entity.setTourCode(generaTourCode());
+        String tourCode = generaTourCode();
+        entity.setTourCode(tourCode);
 
 
         List<String> imageUrls = new ArrayList<>();
@@ -117,15 +120,25 @@ public class TourPackageService {
 
         String urlPrice = googleDriveService.uploadFile(fileTxt,entity.getTourCode());
         entity.setPriceDetail(urlPrice);
-
         tourPackageRepository.save(entity);
-        if (!tourPackageRequest.getTourFeature().isEmpty()){
-            List<TourFeature> tourFeatures = new ArrayList<>(tourPackageRequest.getTourFeature());
 
-            for (TourFeature t : tourFeatures){
-
+        TourPackage update = tourPackageRepository.findByTourCode(tourCode);
+        // Thêm packageFeature
+        if (!tourPackageRequest.getTourFeatureId().isEmpty()) {
+            List<Integer> id = new ArrayList<>(tourPackageRequest.getTourFeatureId());
+            for (int i : id){
+                packageFeatureService.addPackageFeature(new PackageFeatureRequest(update.getId(),i));
             }
         }
+        // Thêm packageDestination
+        if (!tourPackageRequest.getDestinationId().isEmpty()){
+            List<Integer> id = new ArrayList<>(tourPackageRequest.getDestinationId());
+            for (int i : id){
+                packageDestination.add(new PackageDestinationRequest(update.getId(),i,1));
+            }
+        }
+
+
         return new ApiResponse<TourPackage>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 

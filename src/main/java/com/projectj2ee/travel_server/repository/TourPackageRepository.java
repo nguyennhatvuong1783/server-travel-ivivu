@@ -15,5 +15,6 @@ public interface TourPackageRepository extends JpaRepository<TourPackage,Integer
     @Query(value = "SELECT t FROM TourPackage t ORDER BY t.tourCode DESC")
     Optional<TourPackage> findFirstByOrderByTourCodeDesc();
 
+    TourPackage findByTourCode(String tourCode);
     Page<TourPackage> findByDepart(String depart, Pageable pageable);
 }
