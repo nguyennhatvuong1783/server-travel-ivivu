@@ -81,6 +81,10 @@ public class BookingService {
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         return new ApiResponse<>(HttpStatus.OK.value(), "Success",entity);
     }
+    @PreAuthorize("hasAuthority('USER', 'ADMIN)")
+    public ApiResponse<List<Booking>> getBookingByUserId(int userId){
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success",bookingRepository.findByUser_Id(userId));
+    }
 
 
     @PreAuthorize("hasAuthority('USER', 'ADMIN)")

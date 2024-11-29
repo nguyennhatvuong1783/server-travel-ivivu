@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/booking")
 @AllArgsConstructor
@@ -27,6 +29,13 @@ public class BookingController {
     public  ApiResponse<Booking> getBookingId(@PathVariable("id") int id){
         return bookingService.getBookingById(id);
     }
+
+    @GetMapping("user/{id}")
+    public  ApiResponse<List<Booking>> getBookingByUserId(@PathVariable("id") int id){
+        return bookingService.getBookingByUserId(id);
+    }
+
+
 
     @PostMapping("/create")
     public  ApiResponse<Booking> createBooking(@RequestBody BookingRequest bookingRequest){
