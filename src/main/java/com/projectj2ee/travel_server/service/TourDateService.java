@@ -82,8 +82,10 @@ public class TourDateService {
             }
             tourDate.setSpots(tourDate.getSpots()-participant);
             tourDateRepository.save(tourDate);
+        }else {
+            throw new RuntimeException("Tour Date not found");
         }
-        throw new RuntimeException("Tour Date not found");
+
     }
     private Boolean checkPackageId(int id){
         return tourPackageRepository.existsById(id);

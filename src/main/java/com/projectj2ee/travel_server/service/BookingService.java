@@ -101,44 +101,9 @@ public class BookingService {
         Booking entity = bookingMapper.toBooking(bookingRequest);
         entity.setStatus(StatusBooking.PENDING);
 
-        bookingRepository.save(entity);
-
-        // check promotion -> update price
-        Optional<Booking> bookings = bookingRepository.findByUser_IdAndStatus(bookingRequest.getUserId(),StatusBooking.PENDING);
-        if (bookings.isPresent()){
-            Booking booking = bookings.get();
-            List<BookingPromotion> bookingPromotions = bookingPromotionRepository.findById_BookingId(booking.getId());
-            if (!bookingPromotions.isEmpty()){
-                List<Integer> promotionId = new ArrayList<>();
-                bookingPromotions.forEach(p -> promotionId.add(p.getId().getPromotionId()));
-
-                List<Promotion> promotions = new ArrayList<>();
-                promotionId.forEach(id ->{
-                    Optional<Promotion> promotionOpt = promotionRepository.findById(id);
-                    promotionOpt
-                            .filter(Promotion::getStatus)
-                            .ifPresent(promotions::add);
-                });
-
-                BigDecimal discount = BigDecimal.ZERO;
-                BigDecimal originalPrice = booking.getTotalPrice();
-                for (Promotion p : promotions){
-                    if (p.getType() == PromotionType.PERCENTAGE){
-                        discount = discount.add(originalPrice.multiply(
-                                p.getDiscount().divide(new BigDecimal(100))
-                        ));
-                    } else if (p.getType() == PromotionType.AMOUNT) {
-                        discount = discount.add(p.getDiscount());
-                    }
-                }
-                originalPrice.subtract(discount).max(BigDecimal.ZERO);
-                booking.setTotalPrice(originalPrice);
-                bookingRepository.save(booking);
-            }
-            tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
-        }
 
 
+        tourDateService.updateParticipant(bookingRequest.getTourDateId(),bookingRequest.getParticipants());
         // Send mail to confirm
         Optional<TourDate> tourDateOpt = tourDateRepository.findById(bookingRequest.getTourDateId());
         TourDate tourDate = tourDateOpt.orElseGet(TourDate::new);
@@ -147,7 +112,7 @@ public class BookingService {
         TourPackage tourPackage = tourPackageOpt.orElseGet(TourPackage::new);
         User user = userRepository.findById(bookingRequest.getUserId());
         emailService(user,tourPackage,entity,tourDate);
-
+        bookingRepository.save(entity);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Booking Success",entity);
     }
 
@@ -178,6 +143,44 @@ public class BookingService {
                 .orElseThrow(()->new RuntimeException("Booking not found"));
         bookingRepository.delete(entity);
         return new ApiResponse<>(HttpStatus.OK.value(), "Delete success");
+    }
+
+    public ApiResponse<String> addPromotionForBooking(int bookingId){
+        // check promotion -> update price
+        Optional<Booking> bookings = bookingRepository.findById(bookingId);
+        if (bookings.isPresent()){
+            Booking booking = bookings.get();
+            List<BookingPromotion> bookingPromotions = bookingPromotionRepository.findById_BookingId(booking.getId());
+            if (!bookingPromotions.isEmpty()){
+                List<Integer> promotionId = new ArrayList<>();
+                bookingPromotions.forEach(p -> promotionId.add(p.getId().getPromotionId()));
+
+                List<Promotion> promotions = new ArrayList<>();
+                promotionId.forEach(id ->{
+                    Optional<Promotion> promotionOpt = promotionRepository.findById(id);
+                    promotionOpt
+                            .filter(Promotion::getStatus)
+                            .ifPresent(promotions::add);
+                });
+
+                BigDecimal discount = BigDecimal.ZERO;
+                BigDecimal originalPrice = booking.getTotalPrice();
+                for (Promotion p : promotions){
+                    if (p.getType() == PromotionType.PERCENTAGE){
+                        discount = discount.add(originalPrice.multiply(
+                                p.getDiscount().divide(new BigDecimal(100))
+                        ));
+                    } else if (p.getType() == PromotionType.AMOUNT) {
+                        discount = discount.add(p.getDiscount());
+                    }
+                }
+                originalPrice.subtract(discount).max(BigDecimal.ZERO);
+                booking.setTotalPrice(originalPrice);
+                bookingRepository.save(booking);
+            }
+
+        }
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success");
     }
 
     private void emailService(User user, TourPackage tourPackage, Booking entity, TourDate tourDate){
@@ -230,7 +233,7 @@ public class BookingService {
                         .replace("{{start}}",emailDto.getStartDate())
                         .replace("{{end}}",emailDto.getEndDate())
                         .replace("{{name}}",emailDto.getName())
-                        .replace("{{phone}}",emailDto.getPhone()==null ? "" : emailDto.getPhone())
+                        .replace("{{phone}}",emailDto.getPhone()==null ? "no phone" : emailDto.getPhone())
                         .replace("{{email}}",emailDto.getEmail())
                         .replace("{{pricePackage}}",emailDto.getPricePackage())
                         .replace("{{totalPrice}}", emailDto.getTotalPrice());
