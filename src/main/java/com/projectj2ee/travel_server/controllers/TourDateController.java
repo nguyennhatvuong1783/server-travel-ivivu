@@ -26,6 +26,11 @@ public class TourDateController {
         return tourDateService.getTourDateById(id);
     }
 
+    @GetMapping("package/{id}")
+    public ApiResponse<List<TourDate>> getTourDateByPackageId(@PathVariable("id") int id){
+        return tourDateService.getTourDateByTourPackage(id);
+    }
+
     @PostMapping("/create")
     public ApiResponse<TourDate> createTourDate(@RequestBody @Valid TourDateRequest tourDateRequest){
         return tourDateService.addTourDate(tourDateRequest);

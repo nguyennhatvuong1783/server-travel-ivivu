@@ -37,6 +37,10 @@ public class TourDateService {
         return new ApiResponse<TourDate>(HttpStatus.OK.value(), "Success",entity);
     }
 
+    public ApiResponse<List<TourDate>> getTourDateByTourPackage(int packageId){
+        return new ApiResponse<>(HttpStatus.OK.value(), "Success",tourDateRepository.findByTourPackage_Id(packageId));
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     public ApiResponse<TourDate> addTourDate(TourDateRequest request){
         if (!checkPackageId(request.getPackageId()))

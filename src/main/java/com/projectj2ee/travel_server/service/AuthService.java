@@ -89,7 +89,7 @@ public class AuthService {
             String state = URLEncoder.encode(loginType, StandardCharsets.UTF_8); // Tùy chọn thêm trạng thái
             return googleClientCredentials.getInstalled().getAuthUri() + "?" +
                     "client_id=" + googleClientCredentials.getInstalled().getClientId() +
-                    "&redirect_uri=" + URLEncoder.encode(googleClientCredentials.getInstalled().getRedirectUris()[1], StandardCharsets.UTF_8) +
+                    "&redirect_uri=" + URLEncoder.encode(googleClientCredentials.getInstalled().getRedirectUris()[0], StandardCharsets.UTF_8) +
                     "&response_type=code" +
                     "&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8) +
                     "&state=" + state;
@@ -115,7 +115,7 @@ public class AuthService {
                         googleClientCredentials.getInstalled().getClientId(),
                         googleClientCredentials.getInstalled().getClientSecret(),
                         code,
-                        googleClientCredentials.getInstalled().getRedirectUris()[1]
+                        googleClientCredentials.getInstalled().getRedirectUris()[0]
                         ).execute().getAccessToken();
                 WebClient webClient = WebClient.builder()
                         .baseUrl("https://www.googleapis.com/oauth2/v3/userinfo")
