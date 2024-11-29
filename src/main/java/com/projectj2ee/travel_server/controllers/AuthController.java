@@ -99,7 +99,12 @@ public class AuthController {
             username = (String) Objects.requireNonNull(userInfo.get("sub"), "");
             fullName = (String) Objects.requireNonNull(userInfo.get("name"), "");
             email = (String) Objects.requireNonNull(userInfo.get("email"), "");
+        } else if (loginType.trim().equals("facebook")) {
+            username = (String) Objects.requireNonNull(userInfo.get("id"), "");
+            fullName = (String) Objects.requireNonNull(userInfo.get("name"), "");
         }
+
+
         if (!userService.findByUsername(username)){
             UserDto userDto = new UserDto();
             userDto.setEmail(email);

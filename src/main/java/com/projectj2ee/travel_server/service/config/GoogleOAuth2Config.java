@@ -1,6 +1,7 @@
 package com.projectj2ee.travel_server.service.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projectj2ee.travel_server.utils.FacebookCredentials;
 import com.projectj2ee.travel_server.utils.GoogleClientCredentials;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,15 @@ public class GoogleOAuth2Config {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(new FileInputStream(filePath.toString()), GoogleClientCredentials.class);
     }
+
+    @Bean
+    public FacebookCredentials facebookCredentials() throws IOException {
+        String currentDirectory = System.getProperty("user.dir");
+        Path filePath = Paths.get(currentDirectory, "facebook.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(new FileInputStream(filePath.toString()), FacebookCredentials.class);
+    }
+
 
 
 }
