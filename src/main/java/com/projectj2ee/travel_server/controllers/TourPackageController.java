@@ -3,6 +3,7 @@ package com.projectj2ee.travel_server.controllers;
 import com.projectj2ee.travel_server.dto.request.TourPackageRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
+import com.projectj2ee.travel_server.dto.response.TourPackageResponse;
 import com.projectj2ee.travel_server.entity.TourPackage;
 import com.projectj2ee.travel_server.service.GoogleDriveService;
 import com.projectj2ee.travel_server.service.TourPackageService;
@@ -21,7 +22,7 @@ public class TourPackageController {
     private  final GoogleDriveService googleDriveService;
 
     @GetMapping("/")
-    public PageResponse<TourPackage> getAllTourPackage(
+    public PageResponse<TourPackageResponse> getAllTourPackage(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "12") int size
     ){
@@ -29,7 +30,7 @@ public class TourPackageController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TourPackage> getTourPackageById(@PathVariable("id") int id){
+    public ApiResponse<TourPackageResponse> getTourPackageById(@PathVariable("id") int id){
         return tourPackageService.getTourPackageById(id);
     }
 

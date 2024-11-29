@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectj2ee.travel_server.dto.request.TourPackageRequest;
 import com.projectj2ee.travel_server.dto.response.ApiResponse;
 import com.projectj2ee.travel_server.dto.response.PageResponse;
+import com.projectj2ee.travel_server.dto.response.TourPackageResponse;
+import com.projectj2ee.travel_server.entity.TourFeature;
 import com.projectj2ee.travel_server.entity.TourPackage;
 import com.projectj2ee.travel_server.mapper.TourPackageMapper;
 import com.projectj2ee.travel_server.repository.CompanyRepository;
@@ -35,25 +37,46 @@ public class TourPackageService {
     private final GoogleDriveService googleDriveService;
 
     private final CompanyRepository companyRepository;
+    private final PackageFeatureService packageFeatureService;
 
-    public PageResponse<TourPackage> getAllTourPackage(int page, int size){
+    public PageResponse<TourPackageResponse> getAllTourPackage(int page, int size){
         Sort sort = Sort.by("id").descending();
         Pageable pageable = PageRequest.of(page-1,size,sort);
         var pageData = tourPackageRepository.findAll(pageable);
-
-        return PageResponse.<TourPackage>builder()
+        List<TourPackage> data = pageData.getContent();
+        List<TourPackageResponse> responses = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (TourPackage t : data){
+            TourPackageResponse tmp = tourPackageMapper.toResponse(t);
+            try {
+                if (t.getImage()!=null) tmp.setImageUrl(objectMapper.readValue(t.getImage(),List.class));
+                responses.add(tmp);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return PageResponse.<TourPackageResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
                 .totalElements(pageData.getTotalElements())
-                .data(pageData.getContent().stream().toList())
+                .data(responses)
                 .build();
     }
 
-    public ApiResponse<TourPackage> getTourPackageById(int id){
+    public ApiResponse<TourPackageResponse> getTourPackageById(int id){
         TourPackage entity = tourPackageRepository.findById(id).orElseThrow(()->new RuntimeException("Tour-package not found"));
-        return new ApiResponse<TourPackage>(HttpStatus.OK.value(), "Success",entity);
+        TourPackageResponse result = tourPackageMapper.toResponse(entity);
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (entity.getImage()!=null){
+            try {
+                result.setImageUrl(objectMapper.readValue(entity.getImage(),List.class));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new ApiResponse<TourPackageResponse>(HttpStatus.OK.value(), "Success",result);
     }
 
     public PageResponse<TourPackage> getAllTourPackageByDepart(String depart,int page, int size){
@@ -78,6 +101,7 @@ public class TourPackageService {
         entity.setStatus(true);
         entity.setTourCode(generaTourCode());
 
+
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile file : files){
             imageUrls.add(cloudinaryService.uploadImage(file));
@@ -95,6 +119,13 @@ public class TourPackageService {
         entity.setPriceDetail(urlPrice);
 
         tourPackageRepository.save(entity);
+        if (!tourPackageRequest.getTourFeature().isEmpty()){
+            List<TourFeature> tourFeatures = new ArrayList<>(tourPackageRequest.getTourFeature());
+
+            for (TourFeature t : tourFeatures){
+
+            }
+        }
         return new ApiResponse<TourPackage>(HttpStatus.CREATED.value(), "Create Success",entity);
     }
 
@@ -169,6 +200,5 @@ public class TourPackageService {
         }
 
         return newTourCode;
-
     }
 }
