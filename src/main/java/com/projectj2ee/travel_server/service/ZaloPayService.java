@@ -10,7 +10,6 @@ import com.projectj2ee.travel_server.repository.BookingRepository;
 import com.projectj2ee.travel_server.repository.PaymentRepository;
 import com.projectj2ee.travel_server.utils.HMACUtil;
 import jakarta.xml.bind.DatatypeConverter;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,6 +20,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,6 @@ import java.util.*;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class ZaloPayService {
     @Value("${zalopay.app-id}")
     private String appId;
@@ -52,8 +51,16 @@ public class ZaloPayService {
 
     private Mac HmacSHA256;
 
+    @Autowired
     private final BookingRepository bookingRepository;
+
+    @Autowired
     private final PaymentRepository paymentRepository;
+
+    public ZaloPayService(BookingRepository bookingRepository, PaymentRepository paymentRepository) {
+        this.bookingRepository = bookingRepository;
+        this.paymentRepository = paymentRepository;
+    }
 
     private static String getCurrentTimeString(String format) {
         Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT+7"));
