@@ -21,11 +21,11 @@ public class Booking {
     @Column(name = "booking_id")
     int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
     User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "tour_date_id",referencedColumnName = "tour_date_id",nullable = false)
     TourDate tourDate;
 

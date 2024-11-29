@@ -76,7 +76,7 @@ public class TourDateService {
     public void updateParticipant(int id, int participant){
         Optional<TourDate> tourDateOptional = tourDateRepository.findById(id);
         if (tourDateOptional.isPresent()){
-            TourDate tourDate = tourDateOptional.orElseGet(TourDate::new);
+            TourDate tourDate = tourDateOptional.get();
             if (participant > tourDate.getSpots()){
                 throw new RuntimeException("Participants invalid");
             }
