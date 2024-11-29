@@ -1,9 +1,16 @@
 package com.projectj2ee.travel_server.service;
 
 
+import com.projectj2ee.travel_server.dto.enums.StatusBooking;
+import com.projectj2ee.travel_server.dto.enums.StatusPayment;
 import com.projectj2ee.travel_server.dto.request.PaymentRequest;
+import com.projectj2ee.travel_server.entity.Booking;
+import com.projectj2ee.travel_server.entity.Payment;
+import com.projectj2ee.travel_server.repository.BookingRepository;
+import com.projectj2ee.travel_server.repository.PaymentRepository;
 import com.projectj2ee.travel_server.utils.HMACUtil;
 import jakarta.xml.bind.DatatypeConverter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -29,6 +36,7 @@ import java.util.*;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class ZaloPayService {
     @Value("${zalopay.app-id}")
     private String appId;
@@ -44,6 +52,8 @@ public class ZaloPayService {
 
     private Mac HmacSHA256;
 
+    private final BookingRepository bookingRepository;
+    private final PaymentRepository paymentRepository;
 
     private static String getCurrentTimeString(String format) {
         Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT+7"));
@@ -75,7 +85,7 @@ public class ZaloPayService {
             put("bank_code", "");
             put("item", new JSONArray(item).toString());
             put("embed_data", new JSONObject(embedData).toString());
-            put("callback_url","https://4822-125-235-238-144.ngrok-free.app/api/auth/payment/zalo-pay-callback");
+            put("callback_url","https://cdd1-113-173-123-239.ngrok-free.app/api/auth/payment/zalo-pay-callback");
         }};
 
         // Generate MAC
@@ -149,6 +159,29 @@ public class ZaloPayService {
                 // thanh toán thành công
                 // merchant cập nhật trạng thái cho đơn hàng
                 JSONObject data = new JSONObject(dataStr);
+                String itemJson = data.optString("item");
+                if (itemJson!=null){
+                    JSONArray itemArrays = new JSONArray(itemJson);
+                    for (int i = 0; i < itemArrays.length(); i++){
+                        JSONObject item = itemArrays.getJSONObject(i);
+                        String id = item.optString("booking_id");
+                        Optional<Payment> paymentOptional = paymentRepository.findByBooking_Id(Integer.parseInt(id));
+                        Booking booking = bookingRepository.findById(Integer.parseInt(id))
+                                .orElseThrow(()->{
+                                    return new RuntimeException("Booking not found");
+                                });
+
+                        if (paymentOptional.isPresent()){
+                            Payment payment = paymentOptional.get();
+                            payment.setStatus(StatusPayment.PAID);
+                            booking.setStatus(StatusBooking.COMPLETED);
+                            paymentRepository.save(payment);
+                            bookingRepository.save(booking);
+                        }
+                        log.info(id);
+                    }
+                }
+
                 log.info("update order's status = success where app_trans_id = " + data.getString("app_trans_id"));
 
                 result.put("return_code", 1);

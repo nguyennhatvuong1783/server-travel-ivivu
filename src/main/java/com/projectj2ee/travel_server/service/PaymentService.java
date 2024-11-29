@@ -151,9 +151,9 @@ public class PaymentService {
 
     }
 
-//    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('USER')")
     public ApiResponse<String> createZalopayPayment(PaymentRequest request) throws Exception {
-//        addPayment(request);
+        addPayment(request);
         String paymentUrl = zaloPayService.createOrder(request);
         return new ApiResponse<>(HttpStatus.OK.value(), "Success",paymentUrl);
     }
