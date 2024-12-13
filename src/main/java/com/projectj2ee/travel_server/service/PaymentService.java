@@ -71,23 +71,13 @@ public class PaymentService {
     public ApiResponse<String> confirmPayment(int bookingid, String transactionNo){
         Optional<Payment> paymentOpt = paymentRepository.findByBooking_Id(bookingid);
         if (paymentOpt.isPresent()){
-            if (transactionNo.equalsIgnoreCase(paymentOpt.get().getTransaction())){
                 Payment payment = paymentOpt.orElseGet(Payment::new);
                 Booking booking = payment.getBooking();
-                int compare = payment.getAmount().compareTo(booking.getTotalPrice());
-                if (compare == 0){
                     payment.setStatus(StatusPayment.PAID);
                     booking.setStatus(StatusBooking.COMPLETED);
-                } else if (compare < 0) {
-                    payment.setStatus(StatusPayment.PENDING);
-                }else {
-                    payment.setStatus(StatusPayment.OVER);
-                    throw new RuntimeException("overpayment");
-                }
                 paymentRepository.save(payment);
                 bookingRepository.save(booking);
                 return new ApiResponse<>(HttpStatus.CREATED.value(), "Create success");
-            }
         }
         return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Error");
     }

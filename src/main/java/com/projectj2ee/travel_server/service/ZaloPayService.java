@@ -74,7 +74,7 @@ public class ZaloPayService {
         int randomId = rand.nextInt(1000000);
 
         Map<String, Object> embedData = new HashMap<>();
-        embedData.put("redirecturl", "https://percenren.com");
+        embedData.put("redirecturl", "http://localhost:3000/my_booking");
 
         Map<String, Object>[] item = new Map[]{new HashMap<>(){
             {
@@ -92,7 +92,7 @@ public class ZaloPayService {
             put("bank_code", "");
             put("item", new JSONArray(item).toString());
             put("embed_data", new JSONObject(embedData).toString());
-            put("callback_url","https://0658-125-235-238-144.ngrok-free.app/api/auth/payment/zalo-pay-callback");
+            put("callback_url","https://ea09-2402-800-be6f-9224-5584-91a2-bc29-18e.ngrok-free.app/api/auth/payment/zalo-pay-callback");
         }};
 
         // Generate MAC

@@ -15,6 +15,7 @@ import java.util.Set;
 public class TourPackageResponse {
     private int id;
     private String name;
+    private String  tourCode;
     private String description;
     private int duration;
     private BigDecimal price;

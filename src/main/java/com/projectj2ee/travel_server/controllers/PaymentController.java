@@ -30,7 +30,7 @@ public class PaymentController {
         return paymentService.addPayment(paymentRequest);
     }
 
-    @GetMapping("/vnpay")
+    @PostMapping("/vnpay")
     public VNPayResponse pay(HttpServletRequest request, @RequestBody PaymentRequest paymentRequest){
         return paymentService.createVnPayPayment(request, paymentRequest);
     }
